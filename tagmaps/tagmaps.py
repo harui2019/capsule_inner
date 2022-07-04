@@ -62,6 +62,7 @@ def keyTupleLoads(o: dict) -> dict:
 
 
 class TagMap(defaultdict):
+    # TagMap, checkmate - X
     """Specific data structures of :module:`qurry` like `dict[str, list[any]]`.
 
     >>> bla = TagMap()
