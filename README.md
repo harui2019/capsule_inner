@@ -10,14 +10,8 @@ This is a package which indepents from the data structure of Qurry 🍛 for easi
 
 ## Why this name ?
 
-There are many dedicated data structures for Qurry 🍛 If we say one of them like a tree in forest, then all data structures combine, it makes a forest or '森' mori in Japanese.
+There are many dedicated data structures for Qurry 🍛 If we say one of them like a tree in forest, then all data structures combine, it makes a forest or '森' read as mori in Japanese.
 Definitely NOT because I'm a DeadBeat, the fan of Hololive VTuber Mori Calliope, and I didn't want to name something after her for a not short time.
-
----
-
-## Git Subtree Command
-
-`git subtree push --prefix qurry/mori git@github.com:harui2019/mori.git master`
 
 ---
 
