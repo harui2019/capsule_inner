@@ -1,12 +1,11 @@
 from pathlib import Path
-import json
-
 
 class syncControl(list):
+    __version__ = (0, 3, 0)
     """A quick way to create .gitignore
 
     Args:
-        list ([type]): A simple inherition from list.
+        list ([type]): The list of ignored items.
     """
 
     def sync(
@@ -16,7 +15,7 @@ class syncControl(list):
         """Add file to sync.
 
         Args:
-            fileName (str): FileName.
+            fileName (str): Filename.
         """
         self.append(f"!{fileName}")
 
@@ -27,56 +26,37 @@ class syncControl(list):
         """Add file to ignore from sync.
 
         Args:
-            fileName (str): FileName.
+            fileName (str): Filename.
         """
         self.append(f"{fileName}")
 
+    defaultOpenArgs = {
+        'mode': 'w+',
+        'encoding': 'utf-8',
+    }
+    defaultPrintArgs = {
+    }
+
     def export(
         self,
-        saveFolderName: Path,
+        saveLocation: Path,
+        openArgs: dict = {},
+        printArgs: dict = {},
     ) -> None:
         """Export .gitignore
 
         Args:
-            saveFolderName (Path): The location of .gitignore.
+            saveLocation (Path): The location of .gitignore.
+            openArgs (dict): The other arguments for :func:`open` function.
+            printArgs (dict): The other arguments for :func:`print` function.
+
         """
+        printArgs = {k: v for k, v in printArgs.items() if k != 'file'}
+        printArgs = {**self.defaultPrintArgs, **printArgs}
+        openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
+        openArgs = {**self.defaultOpenArgs, **openArgs}
+
         with open(
-            saveFolderName / f".gitignore", 'w+', encoding='utf-8'
+            saveLocation / f".gitignore", **openArgs
         ) as ignoreList:
-            [print(item, file=ignoreList) for item in self]
-
-    def add(
-        self,
-        saveFolderName: Path,
-    ) -> None:
-        """Export .gitignore
-
-        Args:
-            saveFolderName (Path): The location of .gitignore.
-        """
-        with open(
-            saveFolderName / f".gitignore", 'a', encoding='utf-8'
-        ) as ignoreList:
-            [print(item, file=ignoreList) for item in self]
-
-
-def exportSyncJson(
-    savePath: Path,
-    syncList: syncControl,
-    data: dict
-) -> None:
-    """A Quick expression to export json files.
-
-    This function is *deprecated* due to `syncControl` now has its export method.
-
-    Args:
-        savePath (Path): Location to export.
-        syncList (syncControl): Let .gitignore file track and sync.
-        data (dict): The data will export.
-    """
-
-    with open(
-        savePath, 'w', encoding='utf-8'
-    ) as File:
-        syncList.sync(savePath.name)
-        json.dump(data, File, indent=2, ensure_ascii=False)
+            [print(item, file=ignoreList, **printArgs) for item in self]
