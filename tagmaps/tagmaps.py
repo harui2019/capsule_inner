@@ -177,15 +177,36 @@ class TagMap(defaultdict):
         filetype: _availableFileType = 'json',
         isReadOnly: bool = False,
     ) -> dict[str, dict[str, str]]:
-        """_summary_
+        """Handling all arguments.
 
         Args:
-            openArgs (dict, optional): _description_. Defaults to defaultOpenArgs.
-            printArgs (dict, optional): _description_. Defaults to defaultPrintArgs.
-            jsonDumpArgs (dict, optional): _description_. Defaults to defaultJsonDumpArgs.
+            openArgs (dict, optional): 
+                The other arguments for :func:`open` function.
+                Defaults to :attr:`self.defaultOpenArgs`, which is:
+                >>> {
+                    'mode': 'w+',
+                    'encoding': 'utf-8',
+                }
+            printArgs (dict, optional): 
+                The other arguments for :func:`print` function.
+                Defaults to :attr:`self.defaultPrintArgs`, which is:
+                >>> {}
+            jsonDumpArgs (dict, optional): 
+                The other arguments for :func:`json.dump` function.
+                Defaults to :attr:`self.defaultJsonDumpArgs`, which is: 
+                >>> {
+                    'indent': 2,
+                }
+            saveLocation (Path, optional):
+                The exported location. Defaults to `Path('./')`.
+            filetype (Literal[&#39;json&#39;, &#39;csv&#39;], optional): 
+                Export type of `tagMap`. Defaults to 'json'.
+            isReadOnly (bool, optional):
+                Is reading a file of `tagMap` exportation. Defaults to False.
+            
 
         Returns:
-            tuple[dict[str, str], dict[str, str], dict[str, str]]: _description_
+            dict[str, dict[str, str]]: Current arguments.
         """
 
         # working args
@@ -318,6 +339,7 @@ class TagMap(defaultdict):
         jsonDumpArgs: dict = defaultJsonDumpArgs,
         
         whichNum: int = 0,
+        notFoundRaise: bool = True,
     ):
         """Export `tagMap`.
 
@@ -355,6 +377,8 @@ class TagMap(defaultdict):
 
         Raises:
             ValueError: When filetype is not supported.
+            FileNotFoundError: _description_
+            FileNotFoundError: _description_
 
         Return:
             Path: The path of exported file.
@@ -374,20 +398,27 @@ class TagMap(defaultdict):
 
         lsLoc1 = glob.glob(str(saveLocation / f"*.{tagmapName}.*"))
         if len(lsLoc1) == 0:
-            raise FileNotFoundError(
-                f"The file '*.{tagmapName}.*' not found at '{saveLocation}'.")
+            if notFoundRaise:
+                raise FileNotFoundError(
+                    f"The file '*.{tagmapName}.*' not found at '{saveLocation}'.")
+            else:
+                return cls(name=tagmapName)
         lsLoc2 = [f for f in lsLoc1 if filetype in f]
         if not additionName is None:
             lsLoc2 = [f for f in lsLoc2 if additionName in f]
 
         if len(lsLoc2) < 1:
-            raise FileNotFoundError("The file "+(
-                f"" if additionName is None else f"{additionName}.") + f"{tagmapName}.{filetype}"+f" not found at '{saveLocation}'.")
+            if notFoundRaise:
+                raise FileNotFoundError("The file "+(
+                    f"" if additionName is None else f"{additionName}.") + f"{tagmapName}.{filetype}"+f" not found at '{saveLocation}'.")
+            else:
+                return cls(name=tagmapName)
         elif len(lsLoc2) > 1:
             lsLoc2 = [lsLoc2[whichNum]]
             print(f"The following files '{lsLoc2}' are fitting giving 'name' and 'additionName', choosing the '{lsLoc2[0]}'.")
             
         filename = lsLoc2[0]
+        filename = Path(filename).name
         obj = None
             
         if filetype == 'json':
