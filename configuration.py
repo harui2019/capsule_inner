@@ -139,6 +139,7 @@ class Configuration(dict):
     def check(
         self,
         target: Optional[dict[any]] = None,
+        ignores: list[str] = [],
     ) -> list:
         """Check whether the configuration is completed.
 
@@ -149,11 +150,12 @@ class Configuration(dict):
             list: The lost keys of the configuration.
         """
         self._handleInput(target)
-        return [k for k in self.default if not k in target]
+        return [k for k in self.default if not (k in target or k in ignores)]
 
     def ready(
         self,
-        target: dict,
+        target: dict = {},
+        ignores: list[str] = [],
     ) -> bool:
         """Check whether the configuration is completed.
 
@@ -164,7 +166,7 @@ class Configuration(dict):
             bool: Whether the configuration is completed
         """
         self._handleInput(target)
-        return all(k in target for k in self.default)
+        return all(k in target or k in ignores for k in self.default)
 
     def __repr__(self):
         return f"{self.__name__}({self.__dict__})"
