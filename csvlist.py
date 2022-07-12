@@ -16,15 +16,15 @@ class singleColCSV(list):
         list ([type]): The list of ignored items.
     """
 
-    def __init__(
-        self,
-        *args,
-        name: str = __name__,
-        **kwargs,
-    ) -> None:
+    # def __init__(
+    #     self,
+    #     *args,
+    #     name: str = __name__,
+    #     **kwargs,
+    # ) -> None:
 
-        super().__init__(*args, **kwargs)
-        self.__name__ = name
+    #     super().__init__(*args, **kwargs)
+    #     self.__name__ = name
 
 
     defaultOpenArgs = {
