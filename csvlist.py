@@ -6,9 +6,9 @@ import glob
 import warnings
 
 
-class singleColList(list):
+class singleColCSV(list):
     __version__ = (0, 3, 0)
-    __name__ = 'singleColCSVList'
+    __name__ = 'singleColCSV'
     
     """A quick way to create .gitignore
 
