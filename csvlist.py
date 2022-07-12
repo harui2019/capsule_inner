@@ -155,7 +155,7 @@ class singleColCSV(list):
         with open(saveLocation / filename, **openArgs, newline='') as ExportCsv:
             tagmapWriter = csv.writer(ExportCsv, quotechar='|')
             for v in self:
-                tagmapWriter.writerow((v))
+                tagmapWriter.writerow((v, ))
 
         return saveLocation / filename
 
@@ -247,6 +247,7 @@ class singleColCSV(list):
                 tagmapReaper,
                 name=name,
             )
+            obj = [v[0] for v in obj]
 
         return obj
             
