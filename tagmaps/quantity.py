@@ -1,8 +1,6 @@
 import numpy as np
 from typing import Union
 
-# from ...qurrium.type import Quantity
-
 Quantity = dict[str, float]
 
 def quantitiesMean(
