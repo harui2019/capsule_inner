@@ -1,15 +1,18 @@
-from typing import Union, Optional, Callable
+from typing import NamedTuple, Union, Optional, Callable, Iterable
+from collections import namedtuple
 from .jsonablize import Parse as jsonablize
 
-
 class Configuration(dict):
-    __version__ = (0, 3, 0)
+    __version__ = (0, 1, 0)
     def __init__(
         self,
         default: dict = {},
         name: str = 'configuration'
     ) -> None:
         """Set the default parameters dictionary for multiple experiment.
+
+        In future, with the rebuilding of :meth:`multiOuput`, :meth:`powerOutput`
+        :cls:`Configuration` will replace by :cls:`attributedDict`, a better data structure made by :cls:`namedtuple`.
 
         Args:
             default (Optional[dict[any]], optional): [description]. Defaults to None.
@@ -173,3 +176,160 @@ class Configuration(dict):
 
     def jsonize(self):
         return jsonablize(self.__dict__)
+    
+    
+class defaultConfig():
+    __version__ = (0, 1, 0)
+    def __init__(
+        self,
+        field: dict[str, any] = {},
+        name: str = "attributedDict",
+        field_names: Iterable[str] = [],
+        **otherArgs,
+    ) -> None:
+        """Set the default parameters dictionary for multiple experiment.
+
+        A replacement of :cls:`Configuration`.
+
+        Args:
+            default (Optional[dict[any]], optional): [description]. Defaults to None.
+            name (str, optional): [description]. Defaults to 'configuration'.
+        """
+
+        self.__name__ = name
+        
+        self.default = {}
+        if 'params' in otherArgs and len(field) == 0:
+            field = otherArgs['params']
+            
+        if 'paramsKey' in otherArgs and len(field_names) == 0:
+            field = otherArgs['paramsKey']
+            
+        for k in field_names:
+            self.default[k] = None
+            self.__setattr__(k, self.default[k])
+            
+        for k in field:
+            self.default[k] = field[k]
+            self.__setattr__(k, self.default[k])
+            
+        for k in dir(self.default):
+            if k[:2] != '__':
+                self.__setattr__(k, self.default.__getattribute__(k))
+        
+        self.namedtupleType = namedtuple(
+            field_names=self.default.keys(),
+            typename=self.__name__,
+            defaults=self.default.values(),
+        )
+        
+    def __call__(
+        self,
+        *args,
+        **kwargs
+    ) -> Callable:
+        
+        return self.namedtuple(*args, **kwargs)
+    
+    def __getitem__(self, key) -> any:
+        return self.default[key]
+        
+    def __iter__(self):
+        for k, v in self.default.items():
+            yield k, v
+        
+    def make(
+        self,
+        __values: dict[str, any] = {},
+        partial: list[str] = [],
+    ) -> dict[str, any]:
+        """Export a dictionary of configuration.
+
+        Args:
+            __values (dict[str, any], optional): Additonal object. Defaults to `{}`.
+            partial (list[str], optional): Export parts of configuration. Defaults to `[]` as exporting all.
+
+        Returns:
+            dict[str, any]: A dictionary of configuration.
+        """
+        
+        exportNT = self.namedtuple(**__values)
+        exportDict = exportNT._asdict()
+        if len(partial) == 0:
+            return exportDict
+        else:
+            return {
+                k: v for k, v in exportDict.items()
+                if k in partial
+            }
+            
+    def json_make(
+        self,
+        __values: dict[str, any] = {},
+        partial: list[any] = [],
+    ) -> dict[any]:
+        """Export a dictionary of configuration which is jsonable.
+
+        Args:
+            inputObject (dict[any], optional): Additonal object. Defaults to {}.
+
+        Returns:
+            dict[any]: A dictionary of configuration.
+        """
+
+        return jsonablize(self.make(
+            __values=__values,
+            partial=partial,
+        ))
+        
+    def namedtuple(
+        self,
+        __values: dict[str, any] = {},
+    ) -> NamedTuple:
+        """Export configuration as a namedtuple.
+
+        Args:
+            __values (dict[str, any], optional): _description_. Defaults to {}.
+
+        Returns:
+            _type_: _description_
+        """    
+
+        return self.namedtupleType(**__values)
+    
+    def check(
+        self,
+        target: Optional[dict[any]] = None,
+        ignores: list[str] = [],
+    ) -> list:
+        """Check whether the configuration is completed.
+
+        Args:
+            target (dict): The configuration.
+
+        Returns:
+            list: The lost keys of the configuration.
+        """
+        self._handleInput(target)
+        return [k for k in self.namedtupleType._fields if not (k in target or k in ignores)]
+
+    def ready(
+        self,
+        target: dict = {},
+        ignores: list[str] = [],
+    ) -> bool:
+        """Check whether the configuration is completed.
+
+        Args:
+            target (dict): The configuration
+
+        Returns:
+            bool: Whether the configuration is completed
+        """
+        self._handleInput(target)
+        return all(k in target or k in ignores for k in self.namedtupleType._fields)
+    
+    def __repr__(self):
+        return f"{self.__name__}({self.__dict__})"
+
+    

@@ -1,5 +1,5 @@
 from .jsonablize import Parse as jsonablize
-from typing import NamedTuple, Iterable
+from typing import NamedTuple, Iterable, overload
 from collections import namedtuple
 import warnings
 
@@ -17,7 +17,7 @@ class argdict(dict):
         And it's also an inherition of `dict`.
 
         In future, with the rebuilding of :meth:`multiOuput`, :meth:`powerOutput`
-        :cls:`argdict` will replace by :cls:`argTuple`, a better data structure made by :cls:`namedtuple`.
+        :cls:`argdict` will replace by :cls:`attributedDict`, a better data structure made by :cls:`namedtuple`.
 
         - :cls:`NameTuple` of :module:`typing` can be the type hint for this class.
 
@@ -89,7 +89,7 @@ class argdict(dict):
 
 class attributedDict:
     __name__ = "attributedDict"
-    __version__ = (0, 0, 1)
+    __version__ = (0, 3, 1)
     
     def __init__(
         self,
@@ -103,7 +103,6 @@ class attributedDict:
 
         A replacement of :cls:`argdict`.
         
-
         - :cls:`NameTuple` of :module:`typing` can be the type hint for this class.
 
         ## example:
@@ -164,7 +163,7 @@ class attributedDict:
         return self._saveDict[key]
     
     @staticmethod
-    def _setitem_check(__name) -> None:
+    def _setitem_check(__name: str) -> None:
         if __name.startswith('_'):
             raise ValueError(f"Field names cannot start with an underscore: '{__name!r}'")
     
