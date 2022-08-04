@@ -1,6 +1,7 @@
 from .jsonablize import Parse as jsonablize
 from typing import NamedTuple, Iterable, overload
 from collections import namedtuple
+from collections.abc import Mapping
 import warnings
 
 
@@ -87,105 +88,6 @@ class argdict(dict):
         return f'{self.__name__}({self.__dict__})'
 
 
-class attributedDict:
-    __name__ = "attributedDict"
-    __version__ = (0, 3, 1)
-    
-    def __init__(
-        self,
-        field: dict[str, any] = {},
-        name: str = "attributedDict",
-        field_names: Iterable[str] = [],
-        **otherArgs,
-    ) -> None:
-        """This class is a container to keep the parameters for each experiment.
-        And it's also an inherition of `dict`.
-
-        A replacement of :cls:`argdict`.
-        
-        - :cls:`NameTuple` of :module:`typing` can be the type hint for this class.
-
-        ## example:
-
-        >>> A = argset({'a': 22})
-
-        - call
-
-        >>> A['a'], A.a
-        `('22', '22')`
-
-        - iterations
-
-        >>> [k for k in A]
-        `['a']`
-
-        - keys
-
-        >>> ('a' in A)
-        `True`
-
-        - iterable unpacking
-
-        >>> {**A}
-        `{'a': 22}`
-
-        Args:
-            field (dict[str, any]): The parameters of the experiment.
-            field_names (Iterable[str]): The necessary parameters of the experiment.
-        """
-
-        # downward compatibility for :cls:argdict
-        
-        self.__name__ = name
-        
-        self._saveDict = {}
-        if 'params' in otherArgs and len(field) == 0:
-            field = otherArgs['params']
-            
-        if 'paramsKey' in otherArgs and len(field_names) == 0:
-            field = otherArgs['paramsKey']
-            
-        for k in field_names:
-            self._setitem_check(k)
-            self._saveDict[k] = None
-            self.__setattr__(k, self._saveDict[k])
-            
-        for k in field:
-            self._setitem_check(k)
-            self._saveDict[k] = field[k]
-            self.__setattr__(k, self._saveDict[k])
-            
-        for k in dir(self._saveDict):
-            if k[:2] != '__':
-                self.__setattr__('_'+k, self._saveDict.__getattribute__(k))
-            
-    def __getitem__(self, key) -> any:
-        return self._saveDict[key]
-    
-    @staticmethod
-    def _setitem_check(__name: str) -> None:
-        if __name.startswith('_'):
-            raise ValueError(f"Field names cannot start with an underscore: '{__name!r}'")
-    
-    def __setitem__(self, key, value) -> None:
-        self._setitem_check(key)
-        self._saveDict[key] = value
-        self.__setattr__(key, self._saveDict[key])
-        
-    def __iter__(self):
-        for k, v in self._saveDict.items():
-            yield k, v
-            
-    def _asdict(self) -> dict[str, any]:
-        return self._saveDict
-    
-    def _jsonize(self) -> dict[str, any]:
-        return jsonablize(self._saveDict)
-    
-    def __repr__(self) -> str:
-        return f'{self.__name__}({self._saveDict})'
-    
-
 def argTuple(
     params: dict[str, any],
     paramsKey: list[str] = [],
@@ -245,3 +147,253 @@ def argTuple(
             return jsonablize(self._asdict())
 
     return argTuple(**f)
+
+
+class attributedDict(object):
+    __name__ = "attributedDict"
+    __version__ = (0, 3, 0)
+
+    def __init__(
+        self,
+        field: dict[str, any] = {},
+        name: str = "attributedDict",
+        field_names: Iterable[str] = [],
+        **otherArgs,
+    ) -> None:
+        """This class is a container to keep the parameters for each experiment.
+        And it's also an inherition of `dict`.
+
+        A replacement of :cls:`argdict`.
+
+        - :cls:`NameTuple` of :module:`typing` can be the type hint for this class.
+
+        ## example:
+
+        >>> A = argset({'a': 22})
+
+        - call
+
+        >>> A['a'], A.a
+        `('22', '22')`
+
+        - iterations
+
+        >>> [k for k in A]
+        `['a']`
+
+        - keys
+
+        >>> ('a' in A)
+        `True`
+
+        - iterable unpacking
+
+        >>> {**A}
+        `{'a': 22}`
+
+        Args:
+            field (dict[str, any]): The parameters of the experiment.
+            field_names (Iterable[str]): The necessary parameters of the experiment.
+
+        Welcome to Yona Yona Journey
+        Wake up, we're gonna gonna party        
+        """
+
+        object.__setattr__(self, '__name__', name)
+        object.__setattr__(self, '_saveDict', {})
+
+        # downward compatibility for :cls:argdict
+        if 'paramsKey' in otherArgs and len(field_names) == 0:
+            field_names = otherArgs['paramsKey']
+
+        if 'params' in otherArgs and len(field) == 0:
+            field = otherArgs['params']
+
+        for k in field_names:
+            self._set_process(k, None)
+
+        for k in field:
+            self._set_process(k, field[k])
+
+        for k in dir(self._saveDict):
+            if k[:2] != '__':
+                object.__setattr__(
+                    self, '_'+k, self._saveDict.__getattribute__(k))
+
+    # get option
+    def __getitem__(self, __name: any) -> any:
+        return self._saveDict[__name]
+
+    # set option
+    def _set_process(self, key, value) -> None:
+        if key.startswith('_'):
+            raise ValueError(
+                f"Field names cannot start with an underscore: '{key!r}'")
+        self._saveDict[key] = value
+        object.__setattr__(self, key, self._saveDict[key])
+
+    def __setitem__(self, key, value) -> None:
+        self._set_process(key, value)
+
+    def __setattr__(self, key, value) -> None:
+        self._set_process(key, value)
+
+    # del option
+    def _del_process(self, __name) -> None:
+        if not __name in self._saveDict:
+            raise KeyError(f"Such key '{__name}' does not exist.")
+        object.__delattr__(self, __name)
+        del self._saveDict[__name]
+
+    def __delattr__(self, __name) -> None:
+        self._del_process(__name)
+
+    def __delitem__(self, __name) -> None:
+        self._del_process(__name)
+
+    # iter option
+    def __iter__(self):
+        for k in self._saveDict:
+            yield k
+
+    def __len__(self):
+        return len(self._saveDict)
+
+    def _asdict(self) -> dict[str, any]:
+        return self._saveDict
+
+    def _jsonize(self) -> dict[str, any]:
+        return jsonablize(self._saveDict)
+
+    # def keys(self):
+    #     return self._saveDict.keys()
+
+    def __repr__(self) -> str:
+        return f'{self.__name__}({self._saveDict})'
+
+
+class attributedWrapDict(object):
+    """EXPERIMENT, DO NOT USE
+
+    """
+    __name__ = "attributedWrapDict"
+    __version__ = (0, 3, 0)
+
+    def __init__(
+        self,
+        field: dict[str, any] = {},
+        name: str = "attributedWrapDict",
+        field_names: Iterable[str] = [],
+        **otherArgs,
+    ) -> None:
+        """This class is a container to keep the parameters for each experiment.
+        And it's also an inherition of `dict`.
+
+        A replacement of :cls:`argdict`.
+
+        - :cls:`NameTuple` of :module:`typing` can be the type hint for this class.
+
+        ## example:
+
+        >>> A = argset({'a': 22})
+
+        - call
+
+        >>> A['a'], A.a
+        `('22', '22')`
+
+        - iterations
+
+        >>> [k for k in A]
+        `['a']`
+
+        - keys
+
+        >>> ('a' in A)
+        `True`
+
+        - iterable unpacking
+
+        >>> {**A}
+        `{'a': 22}`
+
+        Args:
+            field (dict[str, any]): The parameters of the experiment.
+            field_names (Iterable[str]): The necessary parameters of the experiment.
+        """
+
+        # downward compatibility for :cls:argdict
+
+        object.__setattr__(self, '__name__', name)
+        object.__setattr__(self, '_saveDict', {})
+
+        if 'paramsKey' in otherArgs and len(field_names) == 0:
+            field_names = otherArgs['paramsKey']
+
+        if 'params' in otherArgs and len(field) == 0:
+            field = otherArgs['params']
+
+        for k in field_names:
+            self._set_process(k, None)
+
+        for k in field:
+            self._set_process(k, field[k])
+
+        for k in dir(self._saveDict):
+            if k[:2] != '__':
+                object.__setattr__(
+                    self, k, self._saveDict.__getattribute__(k))
+
+    # get option
+    def __getitem__(self, __name: any) -> any:
+        return self._saveDict[__name]
+
+    # set option
+    def _set_process(self, key, value) -> None:
+        self._saveDict[key] = value
+        object.attr.__setattr__(self, key, self._saveDict[key])
+
+    def __setitem__(self, key, value) -> None:
+        self._set_process(key, value)
+
+    # del option
+    def _del_process(self, __name) -> None:
+        if not __name in self._saveDict:
+            raise KeyError(f"Such key '{__name}' does not exist.")
+        object.attr.__delattr__(self, __name)
+        del self._saveDict[__name]
+
+    def __delitem__(self, __name) -> None:
+        self._del_process(__name)
+
+    # attr wrapper
+    @property
+    def attr(self) -> property:
+        class AttributionWrapper:
+            def __delattr__(self, __name) -> None:
+                self._del_process(__name)
+
+            def __setattr__(self, key, value) -> None:
+                self._set_process(key, value)
+
+        return AttributionWrapper()
+
+    # iter option
+    def __iter__(self):
+        for k in self._saveDict:
+            yield k
+
+    def __len__(self):
+        return len(self._saveDict)
+
+    def asdict(self) -> dict[str, any]:
+        return self._saveDict
+
+    def jsonize(self) -> dict[str, any]:
+        return jsonablize(self._saveDict)
+
+    # def keys(self):
+    #     return self._saveDict.keys()
+
+    def __repr__(self) -> str:
+        return f'{self.__name__}({self._saveDict})'
