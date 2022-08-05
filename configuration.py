@@ -182,10 +182,9 @@ class defaultConfig():
     __version__ = (0, 1, 0)
     def __init__(
         self,
-        field: dict[str, any] = {},
-        name: str = "attributedDict",
-        field_names: Iterable[str] = [],
-        **otherArgs,
+        default: dict[str, any] = {},
+        name: str = "defaultConfig",
+        default_names: Iterable[str] = [],
     ) -> None:
         """Set the default parameters dictionary for multiple experiment.
 
@@ -197,26 +196,13 @@ class defaultConfig():
         """
 
         self.__name__ = name
-        
         self.default = {}
-        if 'params' in otherArgs and len(field) == 0:
-            field = otherArgs['params']
-            
-        if 'paramsKey' in otherArgs and len(field_names) == 0:
-            field = otherArgs['paramsKey']
-            
-        for k in field_names:
-            self.default[k] = None
-            self.__setattr__(k, self.default[k])
-            
-        for k in field:
-            self.default[k] = field[k]
-            self.__setattr__(k, self.default[k])
-            
-        for k in dir(self.default):
-            if k[:2] != '__':
-                self.__setattr__(k, self.default.__getattribute__(k))
         
+        for k in default_names:
+            self.default[k] = None
+        for k in default:
+            self.default[k] = default[k]
+                
         self.namedtupleType = namedtuple(
             field_names=self.default.keys(),
             typename=self.__name__,
@@ -229,7 +215,7 @@ class defaultConfig():
         **kwargs
     ) -> Callable:
         
-        return self.namedtuple(*args, **kwargs)
+        return self.make(*args, **kwargs)
     
     def __getitem__(self, key) -> any:
         return self.default[key]
@@ -237,6 +223,28 @@ class defaultConfig():
     def __iter__(self):
         for k, v in self.default.items():
             yield k, v
+        
+    def _handleInput(
+        self,
+        inputObject: Optional[dict[any]] = None
+    ) -> None:
+        """Check the input for :meth:`.check` and :meth:`.ready`.
+
+        Args:
+            inputObject (Optional[dict[any]], optional): 
+                Input. Defaults to None.
+
+        Raises:
+            ValueError: When Input is None.
+            TypeError: When Input is not a dict.
+        """
+
+        if inputObject == None:
+            raise ValueError("Input can not be null.")
+        elif isinstance(inputObject, dict):
+            ...
+        else:
+            raise TypeError("Input must be a dict.")
         
     def make(
         self,
@@ -253,8 +261,10 @@ class defaultConfig():
             dict[str, any]: A dictionary of configuration.
         """
         
-        exportNT = self.namedtuple(**__values)
-        exportDict = exportNT._asdict()
+        exportDict = {
+            **self.default,
+            **__values,
+        }
         if len(partial) == 0:
             return exportDict
         else:
@@ -330,6 +340,6 @@ class defaultConfig():
         return all(k in target or k in ignores for k in self.namedtupleType._fields)
     
     def __repr__(self):
-        return f"{self.__name__}({self.__dict__})"
+        return f"{self.namedtupleType()}"
 
     

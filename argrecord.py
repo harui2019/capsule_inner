@@ -169,7 +169,7 @@ class attributedDict(object):
 
         ## example:
 
-        >>> A = argset({'a': 22})
+        >>> A = attributedDict({'a': 22})
 
         - call
 
