@@ -208,6 +208,7 @@ class defaultConfig():
             typename=self.__name__,
             defaults=self.default.values(),
         )
+        self.default_names = self.namedtupleType._fields
         
     def __call__(
         self,
@@ -338,6 +339,47 @@ class defaultConfig():
         """
         self._handleInput(target)
         return all(k in target or k in ignores for k in self.namedtupleType._fields)
+    
+    def contain(
+        self,
+        target: dict = {},
+        ignores: list[str] = [],
+    ) -> bool:
+        """Check whether the configuration contains some key of completed one.
+
+        Args:
+            target (dict): The configuration
+
+        Returns:
+            bool: Whether the configuration is completed
+        """
+        self._handleInput(target)
+        for k in self.namedtupleType._fields:
+            if (k in target or k in ignores):
+                return True
+            
+        return False
+        
+    def has(
+        self,
+        target: dict = {},
+        ignores: list[str] = [],
+    ) -> bool:
+        """Check whether the configuration contains what keys of completed one.
+
+        Args:
+            target (dict): The configuration
+
+        Returns:
+            list: The contained keys of the configuration.
+        """
+        self._handleInput(target)
+        keylist = []
+        for k in self.namedtupleType._fields:
+            if (k in target or k in ignores):
+                keylist.append(k)
+            
+        return keylist
     
     def __repr__(self):
         return f"{self.namedtupleType()}"
