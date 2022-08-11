@@ -43,12 +43,15 @@ def Q(
         Union[Quantity, dict[str, Quantity], any]: Mean of quantities.
     """
     if isinstance(quantityComplex, dict):
-        if 'noTags' in quantityComplex:
-            return tagMapQuantityMean(quantityComplex)
+        return tagMapQuantityMean(quantityComplex)
     elif isinstance(quantityComplex, list):
         if len(quantityComplex) > 0:
-            if isinstance(quantityComplex[0], dict):
+            if all(isinstance(v, dict) for v in quantityComplex):
                 return quantitiesMean(quantityComplex)
+            else:
+                return quantityComplex
+        else:
+            return quantityComplex
     else:
         return quantityComplex
     
