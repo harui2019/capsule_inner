@@ -24,14 +24,19 @@ def tupleStrParse(k: str) -> tuple:
         kt = [tr for tr in k[1:-1].split(", ")]
         kt2 = []
         for ktsub in kt:
-            if ktsub[0] == '\'':
-                kt2.append(ktsub[1:-1])
-            elif ktsub[0] == '\"':
-                kt2.append(ktsub[1:-1])
-            elif k.isdigit():
-                kt2.append(int(ktsub))
+            if len(ktsub) > 0:
+                if ktsub[0] == '\'':
+                    kt2.append(ktsub[1:-1])
+                elif ktsub[0] == '\"':
+                    kt2.append(ktsub[1:-1])
+                elif k.isdigit():
+                    kt2.append(int(ktsub))
+                else:
+                    kt2.append(ktsub)
+
             else:
-                kt2.append(ktsub)
+                ...
+                
         kt2 = tuple(kt2)
         return kt2
     else:
@@ -146,7 +151,7 @@ class TagMap(defaultdict):
                 warnings.warn(f"'{k}' is a reserved key for export data.")
 
         self._all_tags_value = []
-        if legacyTag == None:
+        if not bool(legacyTag):
             self._noTags.append(v)
             super().__setitem__('noTags', self._noTags)
         elif legacyTag in self:
@@ -330,6 +335,7 @@ class TagMap(defaultdict):
         cls,
         saveLocation: Union[Path, str] = Path('./'),
         tagmapName: str = __name__,
+        name: str = None,
         additionName: Optional[str] = None,
         filetype: _availableFileType = 'json',
         tupleStrTransplie: bool = True,

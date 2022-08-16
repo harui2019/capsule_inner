@@ -364,7 +364,6 @@ class defaultConfig():
         self,
         target: dict = {},
         ignores: list[str] = [],
-        reverse: bool = False,
     ) -> bool:
         """Check whether the configuration contains what keys of completed one.
 
@@ -380,13 +379,29 @@ class defaultConfig():
         for k in self.namedtupleType._fields:
             if (k in target or k in ignores):
                 keylist.append(k)
-            else:
-                nokeylist.append(k)
             
-        if reverse:
-            return nokeylist
-        else:
-            return keylist
+        return keylist
+        
+    def useless(
+        self,
+        target: dict = {},
+        ignores: list[str] = [],
+    ) -> bool:
+        """Check whether the configuration contains what keys of completed one.
+
+        Args:
+            target (dict): The configuration
+
+        Returns:
+            list: The contained keys of the configuration.
+        """
+        self._handleInput(target)
+        uselesskeylist = []
+        for k in target:
+            if not (k in self.namedtupleType._fields or k in ignores):
+                uselesskeylist.append(k)
+            
+        return uselesskeylist
     
     def __repr__(self):
         return f"{self.namedtupleType()}"
