@@ -29,7 +29,7 @@ def tupleStrParse(k: str) -> tuple:
                     kt2.append(ktsub[1:-1])
                 elif ktsub[0] == '\"':
                     kt2.append(ktsub[1:-1])
-                elif k.isdigit():
+                elif ktsub.isdigit():
                     kt2.append(int(ktsub))
                 else:
                     kt2.append(ktsub)
