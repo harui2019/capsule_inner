@@ -27,7 +27,7 @@ def quickJSON(
 def quickListCSV(
     content: any,
     filename: str,
-    mode: str = 'w+',
+    mode: str,
     encoding: str = 'utf-8',
     jsonablize: bool = False,
     saveLocation: Union[Path, str]= Path('./'),
