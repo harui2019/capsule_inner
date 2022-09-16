@@ -6,3 +6,5 @@ from .csvlist import singleColCSV
 
 from .tagmaps.tagmaps import TagMap, keyTupleLoads, tupleStrParse
 from .tagmaps.quantity import quantitiesMean, tagMapQuantityMean, Q
+
+from .quick import quickJSON, quickListCSV

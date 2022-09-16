@@ -1,6 +1,7 @@
 import json
-from typing import Hashable
+from typing import Hashable, Union
 from collections import OrderedDict
+from pathlib import Path
 
 
 def valueParse(v: any) -> any:
@@ -93,11 +94,17 @@ def quickJSONExport(
     indent: int = 2,
     encoding: str = 'utf-8',
     jsonablize: bool = False,
+    
+    saveLocation: Union[Path, str]= Path('./'),
 ) -> None:
-    ...
-    with open(filename, mode, encoding=encoding) as File:
+    
+    if not isinstance(saveLocation, Path):
+        saveLocation = Path(saveLocation)
+    saveLocWName = saveLocation / filename
+    
+    with open(saveLocWName, mode, encoding=encoding) as File:
         if jsonablize:
             json.dump(Parse(content), File, indent=indent, ensure_ascii=False)
         else:
             json.dump(content, File, indent=indent, ensure_ascii=False)
-        print(f"'{filename}' exported successfully.")
+        print(f"'{saveLocWName}' exported successfully.")

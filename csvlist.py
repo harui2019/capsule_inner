@@ -252,7 +252,7 @@ class singleColCSV(list):
         return obj
             
             
-# class CSVList(list):
+# class matrixCSV(list):
 #     """_summary_
 
 #     Args:
