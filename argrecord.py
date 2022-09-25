@@ -272,17 +272,31 @@ class attributedDict(object):
         return f'{self.__name__}({self._saveDict})'
 
 
-class attributedWrapDict(object):
-    """EXPERIMENT, DO NOT USE
+class attridict(dict):
+    __name__ = 'attridict'
+    __version__ = (0, 4, 1)
+    
+    @property
+    def at(self) -> property:
+        class At(object):
+            def __getattr__(inner_self, key: str) -> any:
+                return self[key]
 
-    """
-    __name__ = "attributedWrapDict"
-    __version__ = (0, 3, 0)
+            def __setattr__(inner_self, key: str, value: any) -> None:
+                self[key] = value
 
+            def __delattr__(inner_self, key: str) -> None:
+                del self[key]
+                
+            def __repr__(inner_self) -> str:
+                return self.__repr__()
+                
+        return At()
+            
     def __init__(
         self,
         field: dict[str, any] = {},
-        name: str = "attributedWrapDict",
+        name: str = "attributedDict",
         field_names: Iterable[str] = [],
         **otherArgs,
     ) -> None:
@@ -295,7 +309,7 @@ class attributedWrapDict(object):
 
         ## example:
 
-        >>> A = argset({'a': 22})
+        >>> A = attributedDict({'a': 22})
 
         - call
 
@@ -320,13 +334,14 @@ class attributedWrapDict(object):
         Args:
             field (dict[str, any]): The parameters of the experiment.
             field_names (Iterable[str]): The necessary parameters of the experiment.
+
+        Welcome to Yona Yona Journey
+        Wake up, we're gonna gonna party        
         """
 
+        self.name = name
+
         # downward compatibility for :cls:argdict
-
-        object.__setattr__(self, '__name__', name)
-        object.__setattr__(self, '_saveDict', {})
-
         if 'paramsKey' in otherArgs and len(field_names) == 0:
             field_names = otherArgs['paramsKey']
 
@@ -334,66 +349,7 @@ class attributedWrapDict(object):
             field = otherArgs['params']
 
         for k in field_names:
-            self._set_process(k, None)
+            self[k] = None
 
         for k in field:
-            self._set_process(k, field[k])
-
-        for k in dir(self._saveDict):
-            if k[:2] != '__':
-                object.__setattr__(
-                    self, k, self._saveDict.__getattribute__(k))
-
-    # get option
-    def __getitem__(self, __name: any) -> any:
-        return self._saveDict[__name]
-
-    # set option
-    def _set_process(self, key, value) -> None:
-        self._saveDict[key] = value
-        object.attr.__setattr__(self, key, self._saveDict[key])
-
-    def __setitem__(self, key, value) -> None:
-        self._set_process(key, value)
-
-    # del option
-    def _del_process(self, __name) -> None:
-        if not __name in self._saveDict:
-            raise KeyError(f"Such key '{__name}' does not exist.")
-        object.attr.__delattr__(self, __name)
-        del self._saveDict[__name]
-
-    def __delitem__(self, __name) -> None:
-        self._del_process(__name)
-
-    # attr wrapper
-    @property
-    def attr(self) -> property:
-        class AttributionWrapper:
-            def __delattr__(self, __name) -> None:
-                self._del_process(__name)
-
-            def __setattr__(self, key, value) -> None:
-                self._set_process(key, value)
-
-        return AttributionWrapper()
-
-    # iter option
-    def __iter__(self):
-        for k in self._saveDict:
-            yield k
-
-    def __len__(self):
-        return len(self._saveDict)
-
-    def asdict(self) -> dict[str, any]:
-        return self._saveDict
-
-    def jsonize(self) -> dict[str, any]:
-        return jsonablize(self._saveDict)
-
-    # def keys(self):
-    #     return self._saveDict.keys()
-
-    def __repr__(self) -> str:
-        return f'{self.__name__}({self._saveDict})'
+            self[k] = field[k]
