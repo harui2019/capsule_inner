@@ -77,7 +77,7 @@ class TagMap(defaultdict):
     >>> # other adding of key and value via `.guider()`
     >>> bla
     ... {
-    ...     'noTags': [...], # something which does not specify tags.
+    ...     (): [...], # something which does not specify tags.
     ...     'strTag1': [...], # something
     ...     ('tupleTag1', ): [...], 
     ...     ... # other hashable as key in python
@@ -86,7 +86,7 @@ class TagMap(defaultdict):
     """
     __version__ = (0, 3, 0)
     __name__ = 'TagMap'
-    protect_keys = ['all', 'noTags']
+    protect_keys = ['all', ()]
 
     def __init__(
         self,
@@ -109,21 +109,18 @@ class TagMap(defaultdict):
             else:
                 not_list_v.append(k)
 
-        self._noTags = self['noTags']
-        self._all_tags_value = []
-
+        self._noTags = self[()]
+        
         if len(not_list_v) > 0:
             warnings.warn(
                 f"The following keys '{not_list_v}' with the values are not list won't be added.")
 
     def all(self) -> list:
-        if len(self._all_tags_value) == 0:
-            d = []
-            for k, v in self.items():
-                if isinstance(v, list):
-                    d += v
-            self._all_tags_value = d
-        return self._all_tags_value
+        d = []
+        for k, v in self.items():
+            if isinstance(v, list):
+                d += v
+        return d
 
     def with_all(self) -> dict[list]:
         return {
@@ -150,10 +147,9 @@ class TagMap(defaultdict):
                 legacyTag == None
                 warnings.warn(f"'{k}' is a reserved key for export data.")
 
-        self._all_tags_value = []
         if not bool(legacyTag):
             self._noTags.append(v)
-            super().__setitem__('noTags', self._noTags)
+            super().__setitem__((), self._noTags)
         elif legacyTag in self:
             self[legacyTag].append(v)
         else:
