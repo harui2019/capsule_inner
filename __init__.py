@@ -1,6 +1,6 @@
 from .argrecord import argdict, attributedDict
 from .jsonablize import Parse as jsonablize, quickJSONExport, sortHashableAhead
-from .configuration import Configuration, defaultConfig
+from .config import Configuration, defaultConfig
 from .gitsync import syncControl
 from .csvlist import singleColCSV
 
