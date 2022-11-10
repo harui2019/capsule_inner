@@ -14,7 +14,18 @@ def quantitiesMean(
     Returns:
         Quantity: Mean of quantities.
     """
-    return {} if len(quantities) == 0 else {k: np.mean([q[k] for q in quantities]) for k in quantities[0]}
+    
+    combined = {}
+    if len(quantities) > 0:
+        for k in quantities[0]:
+            if 'SD' in k:
+                tmp = [v[k]**2 for v in quantities]
+                sample_num = len(tmp)
+                combined[k] = np.sqrt(sum([v**2 for v in tmp]) / sample_num)
+            else:
+                combined[k] = np.mean([v[k] for v in quantities])
+        
+    return combined
 
 
 def tagMapQuantityMean(
