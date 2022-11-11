@@ -14,6 +14,17 @@ def quickJSON(
     
     saveLocation: Union[Path, str]= Path('./'),
 ) -> None:
+    """Configurable quick JSON export.
+
+    Args:
+        content (any): Content wants to be written.
+        filename (str): Filename of the file.
+        mode (str): Mode for :func:`open` function.
+        indent (int, optional): Indent length for json. Defaults to 2.
+        encoding (str, optional): Encoding method. Defaults to 'utf-8'.
+        jsonablize (bool, optional): Whether to transpile all object to jsonable via :func:`mori.jsonablize`. Defaults to False.
+        saveLocation (Union[Path, str], optional): Location of files. Defaults to Path('./').
+    """    
     return quickJSONExport(
         content=content,
         filename=filename,
