@@ -21,7 +21,12 @@ def quantitiesMean(
             if 'SD' in k:
                 tmp = [v[k]**2 for v in quantities]
                 sample_num = len(tmp)
-                combined[k] = np.sqrt(sum([v**2 for v in tmp]) / sample_num)
+                # combined[k] = np.sqrt(sum([v**2 for v in tmp]) / sample_num)
+            elif 'CellList' in k:
+                tmp = []
+                for v in quantities:
+                    tmp += v[k]
+                combined[k.replace('CellList', 'SD')] = np.std(tmp)
             else:
                 combined[k] = np.mean([v[k] for v in quantities])
         
