@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, Iterable
 
 from .jsonablize import quickJSONExport, Parse
 from .csvlist import singleColCSV
 
 def quickJSON(
-    content: any,
-    filename: str,
+    content: Iterable,
+    filename: Union[str, Path],
     mode: str,
     indent: int = 2,
     encoding: str = 'utf-8',
@@ -36,7 +36,7 @@ def quickJSON(
     )
 
 def quickListCSV(
-    content: any,
+    content: Iterable,
     filename: str,
     mode: str,
     encoding: str = 'utf-8',
@@ -59,7 +59,7 @@ def quickListCSV(
     
     tmpSingleColCSV.export(
         saveLocation=saveLocation,
-        filename=filename,
+        name=filename,
         openArgs=openArgs,
         printArgs=printArgs,
     )

@@ -1,10 +1,10 @@
 import json
-from typing import Hashable, Union
+from typing import Hashable, Union, Iterable, Any
 from collections import OrderedDict
 from pathlib import Path
 
 
-def valueParse(v: any) -> any:
+def valueParse(v: Any) -> Union[Iterable, str, int, float, bool, None]:
     """Make value json-allowable. If a value is not allowed by json, them return its '__str__'.
 
     Args:
@@ -21,7 +21,7 @@ def valueParse(v: any) -> any:
         return str(v)
 
 
-def keyParse(k: any) -> any:
+def keyParse(k: Any) -> Union[str, int, float, bool, None]:
     """Make key json-allowable. If a value is not allowed by json, them return its '__str__'.
 
     str, int, float, bool or None
@@ -43,7 +43,7 @@ def keyParse(k: any) -> any:
     return parsed
 
 
-def Parse(o: any) -> any:
+def Parse(o: Any) -> Any:
     """Make a python object json-allowable.
 
     Args:
@@ -88,8 +88,8 @@ def sortHashableAhead(o: dict) -> dict:
 
 
 def quickJSONExport(
-    content: any,
-    filename: str,
+    content: Iterable,
+    filename: Union[str, Path],
     mode: str,
     indent: int = 2,
     encoding: str = 'utf-8',
