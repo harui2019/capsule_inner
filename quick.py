@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing import Union, Iterable
+from typing import Union, Iterable, Literal, Optional
+import json
 
 from .jsonablize import quickJSONExport, Parse
 from .csvlist import singleColCSV
@@ -24,7 +25,7 @@ def quickJSON(
         encoding (str, optional): Encoding method. Defaults to 'utf-8'.
         jsonablize (bool, optional): Whether to transpile all object to jsonable via :func:`mori.jsonablize`. Defaults to False.
         saveLocation (Union[Path, str], optional): Location of files. Defaults to Path('./').
-    """    
+    """
     return quickJSONExport(
         content=content,
         filename=filename,
@@ -40,6 +41,8 @@ def quickListCSV(
     filename: str,
     mode: str,
     encoding: str = 'utf-8',
+    
+    secondFilenameExt: Optional[str] = None,
     jsonablize: bool = False,
     saveLocation: Union[Path, str]= Path('./'),
     
@@ -60,6 +63,34 @@ def quickListCSV(
     tmpSingleColCSV.export(
         saveLocation=saveLocation,
         name=filename,
+        secondFilenameExt=secondFilenameExt,
         openArgs=openArgs,
         printArgs=printArgs,
     )
+    
+def quickRead(
+    filename: Union[str, Path],
+    saveLocation: Union[Path, str]= Path('./'),
+    filetype: Literal['json', 'txt'] = 'json',
+    
+    encoding: str = 'utf-8'
+) -> Union[str, dict]:
+    """Quick read file.
+
+    Args:
+        filename (Union[str, Path]): Filename.
+        encoding (str, optional): Encoding method. Defaults to 'utf-8'.
+
+    Returns:
+        str: Content of the file.
+    """
+    if not isinstance(saveLocation, Path):
+        saveLocation = Path(saveLocation)
+
+    if filetype == 'json':
+        with open(saveLocation / filename, 'r', encoding=encoding) as File:
+            return json.load(File)
+
+    else:
+        with open(saveLocation / filename, 'r', encoding=encoding) as File:
+            return File.read()
