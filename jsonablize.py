@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Hashable, Union, Iterable, Any
 from collections import OrderedDict
 from pathlib import Path
@@ -100,6 +101,8 @@ def quickJSONExport(
     
     if not isinstance(saveLocation, Path):
         saveLocation = Path(saveLocation)
+    if not os.path.exists(saveLocation):
+        os.makedirs(saveLocation)
     saveLocWName = saveLocation / filename
     
     with open(saveLocWName, mode, encoding=encoding) as File:
