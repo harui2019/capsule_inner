@@ -84,9 +84,9 @@ class TagMap(defaultdict):
     ... }
 
     """
-    __version__ = (0, 3, 0)
+    __version__ = (0, 3, 1)
     __name__ = 'TagMap'
-    protect_keys = ['all', ()]
+    protect_keys = ['_all', ()]
 
     def __init__(
         self,
@@ -108,8 +108,6 @@ class TagMap(defaultdict):
                 self[k] = [vv for vv in v]
             else:
                 not_list_v.append(k)
-
-        self._noTags = self[()]
         
         if len(not_list_v) > 0:
             warnings.warn(
@@ -125,7 +123,7 @@ class TagMap(defaultdict):
     def with_all(self) -> dict[list]:
         return {
             **self,
-            'all': self.all()
+            '_all': self.all()
         }
 
     def guider(
@@ -144,12 +142,10 @@ class TagMap(defaultdict):
         """
         for k in self.protect_keys:
             if legacyTag == k:
-                legacyTag == None
                 warnings.warn(f"'{k}' is a reserved key for export data.")
 
-        if not bool(legacyTag):
-            self._noTags.append(v)
-            super().__setitem__((), self._noTags)
+        if legacyTag is None:
+            self[()].append(v)
         elif legacyTag in self:
             self[legacyTag].append(v)
         else:
