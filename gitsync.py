@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Union
 
 class syncControl(list):
     __version__ = (0, 3, 0)
@@ -39,7 +40,7 @@ class syncControl(list):
 
     def export(
         self,
-        saveLocation: Path,
+        saveLocation: Union[Path, str],
         openArgs: dict = {},
         printArgs: dict = {},
     ) -> None:
@@ -55,6 +56,13 @@ class syncControl(list):
         printArgs = {**self.defaultPrintArgs, **printArgs}
         openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
         openArgs = {**self.defaultOpenArgs, **openArgs}
+        
+        if isinstance(saveLocation, (Path)):
+            ...
+        elif isinstance(saveLocation, (str)):
+            saveLocation = Path(saveLocation)
+        else:
+            raise TypeError("The saveLocation is not the type of 'str' or 'Path'.")
 
         with open(
             saveLocation / f".gitignore", **openArgs
