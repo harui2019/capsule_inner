@@ -84,7 +84,7 @@ class TagMap(defaultdict):
     ... }
 
     """
-    __version__ = (0, 3, 1)
+    __version__ = (0, 3, 2)
     __name__ = 'TagMap'
     protect_keys = ['_all', ()]
 
@@ -242,8 +242,8 @@ class TagMap(defaultdict):
     def export(
         self,
         saveLocation: Union[Path, str] = Path('./'),
-        name: str = __name__,
-        additionName: Optional[str] = None,
+        tagmapName: str = __name__,
+        name: Optional[str] = None,
         filetype: _availableFileType = 'json',
 
         openArgs: dict = defaultOpenArgs,
@@ -254,7 +254,7 @@ class TagMap(defaultdict):
 
         Args:
             saveLocation (Path): The location of file.
-            name (str, optional): 
+            tagmapName (str, optional): 
                 Name for this `tagMap`.
                 Defaults to :attr:`self.__name__`.
             additionName (Optional[str], optional): 
@@ -304,7 +304,7 @@ class TagMap(defaultdict):
         saveLocation = args['saveLocation']
 
         filename = (
-            f"" if additionName is None else f"{additionName}.") + f"{name}.{filetype}"
+            f"" if name is None else f"{name}.") + f"{tagmapName}.{filetype}"
 
         if filetype == 'json':
             with open(saveLocation / filename, **openArgs) as ExportJson:
@@ -327,8 +327,7 @@ class TagMap(defaultdict):
         cls,
         saveLocation: Union[Path, str] = Path('./'),
         tagmapName: str = __name__,
-        name: str = None,
-        additionName: Optional[str] = None,
+        name: Optional[str] = None,
         filetype: _availableFileType = 'json',
         tupleStrTransplie: bool = True,
 
@@ -402,13 +401,13 @@ class TagMap(defaultdict):
             else:
                 return cls(name=tagmapName)
         lsLoc2 = [f for f in lsLoc1 if filetype in f]
-        if not additionName is None:
-            lsLoc2 = [f for f in lsLoc2 if additionName in f]
+        if not name is None:
+            lsLoc2 = [f for f in lsLoc2 if name in f]
 
         if len(lsLoc2) < 1:
             if notFoundRaise:
                 raise FileNotFoundError("The file "+(
-                    f"" if additionName is None else f"{additionName}.") + f"{tagmapName}.{filetype}"+f" not found at '{saveLocation}'.")
+                    f"" if name is None else f"{name}.") + f"{tagmapName}.{filetype}"+f" not found at '{saveLocation}'.")
             else:
                 return cls(name=tagmapName)
         elif len(lsLoc2) > 1:
