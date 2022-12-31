@@ -97,6 +97,7 @@ def quickJSONExport(
     jsonablize: bool = False,
     
     saveLocation: Union[Path, str]= Path('./'),
+    mute: bool = False,
 ) -> None:
     
     if not isinstance(saveLocation, Path):
@@ -110,4 +111,5 @@ def quickJSONExport(
             json.dump(Parse(content), File, indent=indent, ensure_ascii=False)
         else:
             json.dump(content, File, indent=indent, ensure_ascii=False)
-        print(f"'{saveLocWName}' exported successfully.")
+        if not mute:
+            print(f"'{saveLocWName}' exported successfully.")

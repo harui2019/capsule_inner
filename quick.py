@@ -14,6 +14,7 @@ def quickJSON(
     jsonablize: bool = False,
     
     saveLocation: Union[Path, str]= Path('./'),
+    mute: bool = False,
 ) -> None:
     """Configurable quick JSON export.
 
@@ -33,7 +34,8 @@ def quickJSON(
         indent=indent,
         encoding=encoding,
         jsonablize=jsonablize,
-        saveLocation=saveLocation
+        saveLocation=saveLocation,
+        mute=mute,
     )
 
 def quickListCSV(
