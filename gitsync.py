@@ -1,8 +1,9 @@
+import os
 from pathlib import Path
 from typing import Union
 
 class syncControl(list):
-    __version__ = (0, 3, 0)
+    __version__ = (0, 3, 1)
     """A quick way to create .gitignore
 
     Args:
@@ -11,25 +12,49 @@ class syncControl(list):
 
     def sync(
         self,
-        fileName: str
-    ) -> None:
+        filename: str,
+        force: bool = False,
+    ) -> bool:
         """Add file to sync.
 
         Args:
-            fileName (str): Filename.
+            filename (str): Filename.
+            
+        Returns:
+            bool: The file is added to be synchronized, otherwise it's already added then return False.
         """
-        self.append(f"!{fileName}")
+        line = f"!{filename}"
+        if line in self:
+            if force:
+                self.append(line)
+                return True
+            return False
+        else:
+            self.append(line)
+            return True
 
     def ignore(
         self,
-        fileName: str
-    ) -> None:
+        filename: str,
+        force: bool = False,
+    ) -> bool:
         """Add file to ignore from sync.
 
         Args:
-            fileName (str): Filename.
+            filename (str): Filename.
+            
+        Returns:
+            bool: The file is added to be ignored, otherwise it's already added then return False.
         """
-        self.append(f"{fileName}")
+        line = f"{filename}"
+        if line in self:
+            if force:
+                self.append(line)
+                return True
+            return False
+        else:
+            self.append(line)
+            return True
 
     defaultOpenArgs = {
         'mode': 'w+',
@@ -41,8 +66,8 @@ class syncControl(list):
     def export(
         self,
         saveLocation: Union[Path, str],
-        openArgs: dict = {},
-        printArgs: dict = {},
+        openArgs: dict = defaultOpenArgs,
+        printArgs: dict = defaultPrintArgs,
     ) -> None:
         """Export .gitignore
 
@@ -68,3 +93,36 @@ class syncControl(list):
             saveLocation / f".gitignore", **openArgs
         ) as ignoreList:
             [print(item, file=ignoreList, **printArgs) for item in self]
+            
+    def read(
+        self,
+        saveLocation: Union[Path, str],
+        ignoreForNotfound: bool = True,
+        openArgs: dict = defaultOpenArgs,
+    ) -> bool:
+        """ead existed .gitignore
+
+        Args:
+            saveLocation (Path): The location of .gitignore.
+            openArgs (dict): The other arguments for :func:`open` function.
+            ignoreForNotfound (bool, optional): Mute `FileNotFoundError` when .gitignore is not found. Defaults to True.
+
+        Raises:
+            FileNotFoundError: The .gitignore is not found.
+
+        Returns:
+            bool: If the .gitignore is found.
+        """
+        openArgs['mode'] = 'r'
+        
+        if os.path.exists(saveLocation / '.gitignore'):
+            with open(
+                saveLocation / f".gitignore", **openArgs
+            ) as ignoreList:
+                for line in ignoreList.readlines():
+                    self.append(line.strip())
+            return True
+        else:
+            if not ignoreForNotfound:
+                raise FileNotFoundError("The .gitignore is not found.")
+            return False
