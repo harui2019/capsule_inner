@@ -57,8 +57,8 @@ class syncControl(list):
             return True
 
     defaultOpenArgs = {
-        'mode': 'w+',
         'encoding': 'utf-8',
+        'mode': 'w+',
     }
     defaultPrintArgs = {
     }
@@ -66,8 +66,8 @@ class syncControl(list):
     def export(
         self,
         saveLocation: Union[Path, str],
-        openArgs: dict = defaultOpenArgs,
-        printArgs: dict = defaultPrintArgs,
+        openArgs: dict = {},
+        printArgs: dict = {},
     ) -> None:
         """Export .gitignore
 
@@ -88,6 +88,9 @@ class syncControl(list):
             saveLocation = Path(saveLocation)
         else:
             raise TypeError("The saveLocation is not the type of 'str' or 'Path'.")
+        
+        if not os.path.exists(saveLocation):
+            raise FileNotFoundError("The saveLocation is not found.")
 
         with open(
             saveLocation / f".gitignore", **openArgs
@@ -98,7 +101,7 @@ class syncControl(list):
         self,
         saveLocation: Union[Path, str],
         ignoreForNotfound: bool = True,
-        openArgs: dict = defaultOpenArgs,
+        openArgs: dict = {},
     ) -> bool:
         """ead existed .gitignore
 
@@ -113,6 +116,8 @@ class syncControl(list):
         Returns:
             bool: If the .gitignore is found.
         """
+        openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
+        openArgs = {**self.defaultOpenArgs, **openArgs}
         openArgs['mode'] = 'r'
         
         if os.path.exists(saveLocation / '.gitignore'):
