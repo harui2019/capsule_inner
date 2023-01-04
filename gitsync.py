@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Union
 
+
 class syncControl(list):
     __version__ = (0, 3, 1)
     """A quick way to create .gitignore
@@ -19,7 +20,7 @@ class syncControl(list):
 
         Args:
             filename (str): Filename.
-            
+
         Returns:
             bool: The file is added to be synchronized, otherwise it's already added then return False.
         """
@@ -42,7 +43,7 @@ class syncControl(list):
 
         Args:
             filename (str): Filename.
-            
+
         Returns:
             bool: The file is added to be ignored, otherwise it's already added then return False.
         """
@@ -81,14 +82,15 @@ class syncControl(list):
         printArgs = {**self.defaultPrintArgs, **printArgs}
         openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
         openArgs = {**self.defaultOpenArgs, **openArgs}
-        
+
         if isinstance(saveLocation, (Path)):
             ...
         elif isinstance(saveLocation, (str)):
             saveLocation = Path(saveLocation)
         else:
-            raise TypeError("The saveLocation is not the type of 'str' or 'Path'.")
-        
+            raise TypeError(
+                "The saveLocation is not the type of 'str' or 'Path'.")
+
         if not os.path.exists(saveLocation):
             raise FileNotFoundError("The saveLocation is not found.")
 
@@ -96,7 +98,7 @@ class syncControl(list):
             saveLocation / f".gitignore", **openArgs
         ) as ignoreList:
             [print(item, file=ignoreList, **printArgs) for item in self]
-            
+
     def read(
         self,
         saveLocation: Union[Path, str],
@@ -119,7 +121,7 @@ class syncControl(list):
         openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
         openArgs = {**self.defaultOpenArgs, **openArgs}
         openArgs['mode'] = 'r'
-        
+
         if os.path.exists(saveLocation / '.gitignore'):
             with open(
                 saveLocation / f".gitignore", **openArgs

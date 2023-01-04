@@ -275,7 +275,7 @@ class attributedDict(object):
 class attridict(dict):
     __name__ = 'attridict'
     __version__ = (0, 4, 1)
-    
+
     @property
     def at(self) -> property:
         class At(object):
@@ -287,12 +287,12 @@ class attridict(dict):
 
             def __delattr__(inner_self, key: str) -> None:
                 del self[key]
-                
+
             def __repr__(inner_self) -> str:
                 return self.__repr__()
-                
+
         return At()
-            
+
     def __init__(
         self,
         field: dict[str, any] = {},

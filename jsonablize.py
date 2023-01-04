@@ -79,13 +79,12 @@ def sortHashableAhead(o: dict) -> dict:
     for k, v in o.items():
         if isinstance(v, Hashable):
             sort_o[k] = v
-    
+
     for k, v in o.items():
         if not k in sort_o:
             sort_o[k] = v
-            
+
     return sort_o
-    
 
 
 def quickJSONExport(
@@ -95,17 +94,17 @@ def quickJSONExport(
     indent: int = 2,
     encoding: str = 'utf-8',
     jsonablize: bool = False,
-    
-    saveLocation: Union[Path, str]= Path('./'),
+
+    saveLocation: Union[Path, str] = Path('./'),
     mute: bool = False,
 ) -> None:
-    
+
     if not isinstance(saveLocation, Path):
         saveLocation = Path(saveLocation)
     if not os.path.exists(saveLocation):
         os.makedirs(saveLocation)
     saveLocWName = saveLocation / filename
-    
+
     with open(saveLocWName, mode, encoding=encoding) as File:
         if jsonablize:
             json.dump(Parse(content), File, indent=indent, ensure_ascii=False)

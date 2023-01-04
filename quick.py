@@ -5,6 +5,7 @@ import json
 from .jsonablize import quickJSONExport, Parse
 from .csvlist import singleColCSV
 
+
 def quickJSON(
     content: Iterable,
     filename: Union[str, Path],
@@ -12,8 +13,8 @@ def quickJSON(
     indent: int = 2,
     encoding: str = 'utf-8',
     jsonablize: bool = False,
-    
-    saveLocation: Union[Path, str]= Path('./'),
+
+    saveLocation: Union[Path, str] = Path('./'),
     mute: bool = False,
 ) -> None:
     """Configurable quick JSON export.
@@ -38,30 +39,31 @@ def quickJSON(
         mute=mute,
     )
 
+
 def quickListCSV(
     content: Iterable,
     filename: str,
     mode: str,
     encoding: str = 'utf-8',
-    
+
     secondFilenameExt: Optional[str] = None,
     jsonablize: bool = False,
-    saveLocation: Union[Path, str]= Path('./'),
-    
+    saveLocation: Union[Path, str] = Path('./'),
+
     printArgs: dict = {},
 ) -> None:
-    
+
     if not isinstance(saveLocation, Path):
         saveLocation = Path(saveLocation)
     if jsonablize:
         content = [Parse(v) for v in content]
-        
+
     tmpSingleColCSV = singleColCSV(content)
-    openArgs= {
+    openArgs = {
         'mode': mode,
         'encoding': encoding,
     }
-    
+
     tmpSingleColCSV.export(
         saveLocation=saveLocation,
         name=filename,
@@ -69,12 +71,13 @@ def quickListCSV(
         openArgs=openArgs,
         printArgs=printArgs,
     )
-    
+
+
 def quickRead(
     filename: Union[str, Path],
-    saveLocation: Union[Path, str]= Path('./'),
+    saveLocation: Union[Path, str] = Path('./'),
     filetype: Literal['json', 'txt'] = 'json',
-    
+
     encoding: str = 'utf-8'
 ) -> Union[str, dict]:
     """Quick read file.

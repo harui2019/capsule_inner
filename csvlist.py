@@ -160,7 +160,7 @@ class singleColCSV(list):
         name: str,
         saveLocation: Union[Path, str] = Path('./'),
         secondFilenameExt: Optional[str] = None,
-        
+
         openArgs: dict = defaultOpenArgs,
         printArgs: dict = defaultPrintArgs,
         whichNum: int = 0,
@@ -222,7 +222,8 @@ class singleColCSV(list):
 
         if len(lsLoc2) < 1:
             if notFoundRaise:
-                raise FileNotFoundError(f"The file '{name}.'" + f"{secondFilenameExt}.csv"+f" not found at '{saveLocation}'.")
+                raise FileNotFoundError(
+                    f"The file '{name}.'" + f"{secondFilenameExt}.csv"+f" not found at '{saveLocation}'.")
             else:
                 return cls(name=secondFilenameExt)
         elif len(lsLoc2) > 1:
