@@ -66,11 +66,11 @@ def keyTupleLoads(o: dict) -> dict:
     return o
 
 
-class TagMap(defaultdict):
-    # TagMap, checkmate - X
+class TagList(defaultdict):
+    # TagList, checkmate - X
     """Specific data structures of :module:`qurry` like `dict[str, list[any]]`.
 
-    >>> bla = TagMap()
+    >>> bla = TagList()
 
     >>> bla.guider('strTag1', [...])
     >>> bla.guider(('tupleTag1', ), [...])
@@ -85,7 +85,7 @@ class TagMap(defaultdict):
 
     """
     __version__ = (0, 3, 2)
-    __name__ = 'TagMap'
+    __name__ = 'TagList'
     protect_keys = ['_all', ()]
 
     def __init__(
@@ -442,3 +442,6 @@ class TagMap(defaultdict):
 
         return obj
             
+            
+def TagList(*args, **kwargs):
+    return TagList(*args, **kwargs)
