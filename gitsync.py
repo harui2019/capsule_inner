@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union
 
 
-class syncControl(list):
+class syncControl(list[str]):
     __version__ = (0, 3, 1)
     """A quick way to create .gitignore
 

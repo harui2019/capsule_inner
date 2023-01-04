@@ -1,4 +1,4 @@
-from typing import Optional, Iterable, Literal, Union
+from typing import Optional, Iterable, Literal, Union, TypeVar
 from pathlib import Path
 from collections import defaultdict
 import os
@@ -8,6 +8,8 @@ import glob
 import warnings
 
 from ..jsonablize import Parse
+
+T = TypeVar('T')
 
 
 def tupleStrParse(k: str) -> tuple:
@@ -66,7 +68,7 @@ def keyTupleLoads(o: dict) -> dict:
     return o
 
 
-class TagList(defaultdict):
+class TagList(defaultdict[T]):
     # TagList, checkmate - X
     """Specific data structures of :module:`qurry` like `dict[str, list[any]]`.
 

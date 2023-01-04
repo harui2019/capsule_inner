@@ -1,8 +1,8 @@
-from typing import NamedTuple, Union, Optional, Callable, Iterable
+from typing import NamedTuple, Union, Optional, Callable, Iterable, Any
 from collections import namedtuple
 from .jsonablize import Parse as jsonablize
 
-class Configuration(dict):
+class Configuration(dict[str, Optional[Any]]):
     __version__ = (0, 1, 0)
     def __init__(
         self,

@@ -1,11 +1,13 @@
-from typing import Optional, Iterable, Literal, Union, NamedTuple
+from typing import Optional, TypeVar, Union, NamedTuple
 from pathlib import Path
 import os
 import csv
 import glob
 
+T = TypeVar('T')
 
-class singleColCSV(list):
+
+class singleColCSV(list[T]):
     __version__ = (0, 3, 1)
     __name__ = 'singleCol'
 
