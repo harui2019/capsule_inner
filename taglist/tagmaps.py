@@ -36,7 +36,7 @@ def tupleStrParse(k: str) -> tuple:
 
             else:
                 ...
-                
+
         kt2 = tuple(kt2)
         return kt2
     else:
@@ -108,7 +108,7 @@ class TagList(defaultdict):
                 self[k] = [vv for vv in v]
             else:
                 not_list_v.append(k)
-        
+
         if len(not_list_v) > 0:
             warnings.warn(
                 f"The following keys '{not_list_v}' with the values are not list won't be added.")
@@ -200,7 +200,7 @@ class TagList(defaultdict):
                 Export type of `tagMap`. Defaults to 'json'.
             isReadOnly (bool, optional):
                 Is reading a file of `tagMap` exportation. Defaults to False.
-            
+
 
         Returns:
             dict[str, dict[str, str]]: Current arguments.
@@ -334,7 +334,7 @@ class TagList(defaultdict):
         openArgs: dict = defaultOpenArgs,
         printArgs: dict = defaultPrintArgs,
         jsonDumpArgs: dict = defaultJsonDumpArgs,
-        
+
         whichNum: int = 0,
         notFoundRaise: bool = True,
     ):
@@ -412,12 +412,13 @@ class TagList(defaultdict):
                 return cls(name=tagmapName)
         elif len(lsLoc2) > 1:
             lsLoc2 = [lsLoc2[whichNum]]
-            print(f"The following files '{lsLoc2}' are fitting giving 'name' and 'additionName', choosing the '{lsLoc2[0]}'.")
-            
+            print(
+                f"The following files '{lsLoc2}' are fitting giving 'name' and 'additionName', choosing the '{lsLoc2[0]}'.")
+
         filename = lsLoc2[0]
         filename = Path(filename).name
         obj = None
-            
+
         if filetype == 'json':
             with open(saveLocation / filename, **openArgs) as ReadJson:
                 rawData = json.load(ReadJson)
@@ -441,7 +442,3 @@ class TagList(defaultdict):
             warnings.warn("Reading cancelled for no specified filetype.")
 
         return obj
-            
-            
-def TagList(*args, **kwargs):
-    return TagList(*args, **kwargs)
