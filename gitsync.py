@@ -121,6 +121,14 @@ class syncControl(list[str]):
         openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
         openArgs = {**self.defaultOpenArgs, **openArgs}
         openArgs['mode'] = 'r'
+        
+        if isinstance(saveLocation, (Path)):
+            ...
+        elif isinstance(saveLocation, (str)):
+            saveLocation = Path(saveLocation)
+        else:
+            raise TypeError(
+                "The saveLocation is not the type of 'str' or 'Path'.")
 
         if os.path.exists(saveLocation / '.gitignore'):
             with open(
