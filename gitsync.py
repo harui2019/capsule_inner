@@ -102,6 +102,7 @@ class syncControl(list[str]):
     def read(
         self,
         saveLocation: Union[Path, str],
+        takeDuplicate: bool = False,
         ignoreForNotfound: bool = True,
         openArgs: dict = {},
     ) -> bool:
@@ -135,7 +136,11 @@ class syncControl(list[str]):
                 saveLocation / f".gitignore", **openArgs
             ) as ignoreList:
                 for line in ignoreList.readlines():
-                    self.append(line.strip())
+                    newLine = line.strip()
+                    if not newLine in self:
+                        self.append(newLine)
+                    elif takeDuplicate:
+                        self.append(newLine)
             return True
         else:
             if not ignoreForNotfound:
