@@ -12,7 +12,6 @@ class Configuration(dict[str, Optional[Any]]):
         """Set the default parameters dictionary for multiple experiment.
 
         In future, with the rebuilding of :meth:`multiOuput`, :meth:`powerOutput`
-        :cls:`Configuration` will replace by :cls:`attributedDict`, a better data structure made by :cls:`namedtuple`.
 
         Args:
             default (Optional[dict[any]], optional): [description]. Defaults to None.
