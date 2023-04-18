@@ -67,7 +67,9 @@ class syncControl(list[str]):
     def export(
         self,
         saveLocation: Union[Path, str],
-        openArgs: dict = {},
+        openArgs: dict = {
+            'mode': 'w+',
+        },
         printArgs: dict = {},
     ) -> None:
         """Export .gitignore
