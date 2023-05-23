@@ -396,7 +396,17 @@ class TagList(defaultdict[Hashable, list[T]]):
         jsonDumpArgs = args['jsonDumpArgs']
         saveLocation = args['saveLocation']
 
-        lsLoc1 = glob.glob(str(saveLocation / f"*.{tagListName}.*"))
+        lsLoc11 = glob.glob(str(saveLocation / f"{tagListName}.*"))
+        lsLoc12 = glob.glob(str(saveLocation / f"*.{tagListName}.*"))
+        if len(lsLoc11) == 0 and len(lsLoc12) == 0:
+            lsLoc1 = []
+        elif len(lsLoc11) == 0:
+            lsLoc1 = lsLoc12
+        elif len(lsLoc12) == 0:
+            lsLoc1 = lsLoc11
+        else:
+            lsLoc1 = lsLoc11 + lsLoc12
+        
         if len(lsLoc1) == 0:
             if notFoundRaise:
                 raise FileNotFoundError(
