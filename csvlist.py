@@ -64,7 +64,7 @@ class singleColCSV(list[T]):
             saveLocation (Path, optional):
                 The exported location. Defaults to `Path('./')`.
             isReadOnly (bool, optional):
-                Is reading a file of `tagMap` exportation. Defaults to False.
+                Is reading a file of `tagList` exportation. Defaults to False.
 
 
         Returns:
@@ -104,15 +104,15 @@ class singleColCSV(list[T]):
         openArgs: dict = defaultOpenArgs,
         printArgs: dict = defaultPrintArgs,
     ) -> Path:
-        """Export `tagMap`.
+        """Export `tagList`.
 
         Args:
             name (str, optional): 
-                Name for this `tagMap`.
+                Name for this `tagList`.
                 Defaults to 'untitled'.
             saveLocation (Path): The location of file.
             additionName (Optional[str], optional): 
-                Name for this `tagMap`, 
+                Name for this `tagList`, 
             secondFilenameExt (Optional[str], optional):
             openArgs (dict, optional): 
                 The other arguments for :func:`open` function.
@@ -150,9 +150,9 @@ class singleColCSV(list[T]):
         ) + ".csv"
 
         with open(saveLocation / filename, **openArgs, newline='') as ExportCsv:
-            tagmapWriter = csv.writer(ExportCsv, quotechar='|')
+            taglistWriter = csv.writer(ExportCsv, quotechar='|')
             for v in self:
-                tagmapWriter.writerow((v, ))
+                taglistWriter.writerow((v, ))
 
         return saveLocation / filename
 
@@ -168,15 +168,15 @@ class singleColCSV(list[T]):
         whichNum: int = 0,
         notFoundRaise: bool = True,
     ):
-        """Export `tagMap`.
+        """Export `tagList`.
 
         Args:
             name (str, optional): 
-                Name for this `tagMap`.
+                Name for this `tagList`.
                 Defaults to 'untitled'.
             saveLocation (Path): The location of file.
             additionName (Optional[str], optional): 
-                Name for this `tagMap`, 
+                Name for this `tagList`, 
             secondFilenameExt (Optional[str], optional):
             openArgs (dict, optional): 
                 The other arguments for :func:`open` function.
@@ -238,9 +238,9 @@ class singleColCSV(list[T]):
         obj = None
 
         with open(saveLocation / filename, **openArgs, newline='') as ReadCsv:
-            tagmapReaper = csv.reader(ReadCsv, quotechar='|')
+            taglistReaper = csv.reader(ReadCsv, quotechar='|')
             obj = cls(
-                tagmapReaper,
+                taglistReaper,
                 name=secondFilenameExt,
             )
             obj = [v[0] for v in obj]

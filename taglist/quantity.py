@@ -33,33 +33,33 @@ def quantitiesMean(
     return combined
 
 
-def tagMapQuantityMean(
-    tagMapQuantities: dict[str, list[Quantity]],
+def tagListQuantityMean(
+    tagListQuantities: dict[str, list[Quantity]],
 ) -> dict[str, Quantity]:
-    """Averaging the quantities in a :cls:`tagMap`.
+    """Averaging the quantities in a :cls:`tagList`.
 
     Args:
-        tagMapQuantities (tagMap): tagMapQuantities.
+        tagListQuantities (tagList): tagListQuantities.
 
     Returns:
         dict[str, Quantity]: Mean of quantities.
     """
-    return {k: quantitiesMean(v) for k, v in tagMapQuantities.items()}
+    return {k: quantitiesMean(v) for k, v in tagListQuantities.items()}
 
 
 def Q(
     quantityComplex: Union[list[Quantity], dict[str, list[Quantity]]]
 ) -> Union[Quantity, dict[str, Quantity], any]:
-    """Averaging a list of quantities or the quantities in a :cls:`tagMap`.
+    """Averaging a list of quantities or the quantities in a :cls:`tagList`.
 
     Args:
-        quantityComplex (Union[list[Quantity], dict[str, list[Quantity]]]): List of quantities or tagMapQuantities.
+        quantityComplex (Union[list[Quantity], dict[str, list[Quantity]]]): List of quantities or tagListQuantities.
 
     Returns:
         Union[Quantity, dict[str, Quantity], any]: Mean of quantities.
     """
     if isinstance(quantityComplex, dict):
-        return tagMapQuantityMean(quantityComplex)
+        return tagListQuantityMean(quantityComplex)
     elif isinstance(quantityComplex, list):
         if len(quantityComplex) > 0:
             if all(isinstance(v, dict) for v in quantityComplex):

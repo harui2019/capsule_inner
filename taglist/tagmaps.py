@@ -200,9 +200,9 @@ class TagList(defaultdict[Hashable, list[T]]):
             saveLocation (Path, optional):
                 The exported location. Defaults to `Path('./')`.
             filetype (Literal[&#39;json&#39;, &#39;csv&#39;], optional): 
-                Export type of `tagMap`. Defaults to 'json'.
+                Export type of `tagList`. Defaults to 'json'.
             isReadOnly (bool, optional):
-                Is reading a file of `tagMap` exportation. Defaults to False.
+                Is reading a file of `tagList` exportation. Defaults to False.
 
 
         Returns:
@@ -245,7 +245,7 @@ class TagList(defaultdict[Hashable, list[T]]):
     def export(
         self,
         saveLocation: Union[Path, str] = Path('./'),
-        tagmapName: str = __name__,
+        tagListName: str = __name__,
         name: Optional[str] = None,
         filetype: _availableFileType = 'json',
 
@@ -253,22 +253,22 @@ class TagList(defaultdict[Hashable, list[T]]):
         printArgs: dict = defaultPrintArgs,
         jsonDumpArgs: dict = defaultJsonDumpArgs,
     ) -> Path:
-        """Export `tagMap`.
+        """Export `tagList`.
 
         Args:
             saveLocation (Path): The location of file.
-            tagmapName (str, optional): 
-                Name for this `tagMap`.
+            tagListName (str, optional): 
+                Name for this `tagList`.
                 Defaults to :attr:`self.__name__`.
             additionName (Optional[str], optional): 
-                Addition name for this `tagMap`, 
+                Addition name for this `tagList`, 
                 when does not specify any text but `None`, then generating file name like:
                 >>> f"{name}.{filetype}"
                 Otherwise, :
                 >>> f"{additionName}.{name}.{filetype}"
                 Defaults to None.
             filetype (Literal[&#39;json&#39;, &#39;csv&#39;], optional): 
-                Export type of `tagMap`. Defaults to 'json'.
+                Export type of `tagList`. Defaults to 'json'.
             openArgs (dict, optional): 
                 The other arguments for :func:`open` function.
                 Defaults to :attr:`self.defaultOpenArgs`, which is:
@@ -307,7 +307,7 @@ class TagList(defaultdict[Hashable, list[T]]):
         saveLocation = args['saveLocation']
 
         filename = (
-            f"" if name is None else f"{name}.") + f"{tagmapName}.{filetype}"
+            f"" if name is None else f"{name}.") + f"{tagListName}.{filetype}"
 
         if filetype == 'json':
             with open(saveLocation / filename, **openArgs) as ExportJson:
@@ -315,10 +315,10 @@ class TagList(defaultdict[Hashable, list[T]]):
 
         elif filetype == 'csv':
             with open(saveLocation / filename, **openArgs, newline='') as ExportCsv:
-                tagmapWriter = csv.writer(ExportCsv, quotechar='|')
+                tagListWriter = csv.writer(ExportCsv, quotechar='|')
                 for k, vs in self.items():
                     for v in vs:
-                        tagmapWriter.writerow((k, v))
+                        tagListWriter.writerow((k, v))
 
         else:
             warnings.warn("Exporting cancelled for no specified filetype.")
@@ -329,7 +329,7 @@ class TagList(defaultdict[Hashable, list[T]]):
     def read(
         cls,
         saveLocation: Union[Path, str] = Path('./'),
-        tagmapName: str = __name__,
+        tagListName: str = __name__,
         name: Optional[str] = None,
         filetype: _availableFileType = 'json',
         tupleStrTransplie: bool = True,
@@ -341,22 +341,22 @@ class TagList(defaultdict[Hashable, list[T]]):
         whichNum: int = 0,
         notFoundRaise: bool = True,
     ):
-        """Export `tagMap`.
+        """Export `tagList`.
 
         Args:
             saveLocation (Path): The location of file.
-            tagmapName (str, optional): 
-                Name for this `tagMap`.
-                Defaults to `tagMap`.
+            tagListName (str, optional): 
+                Name for this `tagList`.
+                Defaults to `tagList`.
             additionName (Optional[str], optional): 
-                Addition name for this `tagMap`, 
+                Addition name for this `tagList`, 
                 when does not specify any text but `None`, then generating file name like:
                 >>> f"{name}.{filetype}"
                 Otherwise, :
                 >>> f"{additionName}.{name}.{filetype}"
                 Defaults to None.
             filetype (Literal[&#39;json&#39;, &#39;csv&#39;], optional): 
-                Export type of `tagMap`. Defaults to 'json'.
+                Export type of `tagList`. Defaults to 'json'.
             openArgs (dict, optional): 
                 The other arguments for :func:`open` function.
                 Defaults to :attr:`self.defaultOpenArgs`, which is:
@@ -396,13 +396,13 @@ class TagList(defaultdict[Hashable, list[T]]):
         jsonDumpArgs = args['jsonDumpArgs']
         saveLocation = args['saveLocation']
 
-        lsLoc1 = glob.glob(str(saveLocation / f"*.{tagmapName}.*"))
+        lsLoc1 = glob.glob(str(saveLocation / f"*.{tagListName}.*"))
         if len(lsLoc1) == 0:
             if notFoundRaise:
                 raise FileNotFoundError(
-                    f"The file '*.{tagmapName}.*' not found at '{saveLocation}'.")
+                    f"The file '*.{tagListName}.*' not found at '{saveLocation}'.")
             else:
-                return cls(name=tagmapName)
+                return cls(name=tagListName)
         lsLoc2 = [f for f in lsLoc1 if filetype in f]
         if not name is None:
             lsLoc2 = [f for f in lsLoc2 if name in f]
@@ -410,9 +410,9 @@ class TagList(defaultdict[Hashable, list[T]]):
         if len(lsLoc2) < 1:
             if notFoundRaise:
                 raise FileNotFoundError("The file "+(
-                    f"" if name is None else f"{name}.") + f"{tagmapName}.{filetype}"+f" not found at '{saveLocation}'.")
+                    f"" if name is None else f"{name}.") + f"{tagListName}.{filetype}"+f" not found at '{saveLocation}'.")
             else:
-                return cls(name=tagmapName)
+                return cls(name=tagListName)
         elif len(lsLoc2) > 1:
             lsLoc2 = [lsLoc2[whichNum]]
             print(
@@ -427,17 +427,17 @@ class TagList(defaultdict[Hashable, list[T]]):
                 rawData = json.load(ReadJson)
                 obj = cls(
                     o=rawData,
-                    name=tagmapName,
+                    name=tagListName,
                     tupleStrTransplie=tupleStrTransplie,
                 )
 
         elif filetype == 'csv':
             with open(saveLocation / filename, **openArgs, newline='') as ReadCsv:
-                tagmapReaper = csv.reader(ReadCsv, quotechar='|')
+                tagListReaper = csv.reader(ReadCsv, quotechar='|')
                 obj = cls(
-                    name=tagmapName,
+                    name=tagListName,
                 )
-                for k, v in tagmapReaper:
+                for k, v in tagListReaper:
                     kt = tupleStrParse(k) if tupleStrParse else k
                     obj[kt].append(v)
 
