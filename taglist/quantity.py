@@ -1,18 +1,16 @@
 import numpy as np
 from typing import Union
 
-Quantity = dict[str, float]
-
 def quantitiesMean(
-    quantities: list[Quantity],
-) -> Quantity:
+    quantities: list[dict[str, float]],
+) -> dict[str, float]:
     """Averaging a list of quantities.
 
     Args:
-        quantities (list[Quantity]): List of quantities.
+        quantities (list[dict[str, float]]): List of quantities.
 
     Returns:
-        Quantity: Mean of quantities.
+        dict[str, float]: Mean of quantities.
     """
     
     combined = {}
@@ -34,29 +32,29 @@ def quantitiesMean(
 
 
 def tagListQuantityMean(
-    tagListQuantities: dict[str, list[Quantity]],
-) -> dict[str, Quantity]:
+    tagListQuantities: dict[str, list[ dict[str, float]]],
+) -> dict[str, dict[str, float]]:
     """Averaging the quantities in a :cls:`tagList`.
 
     Args:
         tagListQuantities (tagList): tagListQuantities.
 
     Returns:
-        dict[str, Quantity]: Mean of quantities.
+        dict[str, dict[str, float]]: Mean of quantities.
     """
     return {k: quantitiesMean(v) for k, v in tagListQuantities.items()}
 
 
 def Q(
-    quantityComplex: Union[list[Quantity], dict[str, list[Quantity]]]
-) -> Union[Quantity, dict[str, Quantity], any]:
+    quantityComplex: Union[list[dict[str, float]], dict[str, list[dict[str, float]]]]
+) -> Union[dict[str, float], dict[str, dict[str, float]], any]:
     """Averaging a list of quantities or the quantities in a :cls:`tagList`.
 
     Args:
-        quantityComplex (Union[list[Quantity], dict[str, list[Quantity]]]): List of quantities or tagListQuantities.
+        quantityComplex (Union[list[dict[str, float]], dict[str, list[dict[str, float]]]]): List of quantities or tagListQuantities.
 
     Returns:
-        Union[Quantity, dict[str, Quantity], any]: Mean of quantities.
+        Union[dict[str, float], dict[str, dict[str, float]], any]: Mean of quantities.
     """
     if isinstance(quantityComplex, dict):
         return tagListQuantityMean(quantityComplex)
