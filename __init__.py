@@ -7,5 +7,3 @@ from .taglist.tagmaps import TagList, keyTupleLoads, tupleStrParse
 from .taglist.quantity import quantitiesMean, tagListQuantityMean, Q
 
 from .quick import quickJSON, quickListCSV, quickRead
-
-__version__ = (0, 0, 5)

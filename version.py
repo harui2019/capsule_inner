@@ -1,4 +1,4 @@
-version_main = (0, 1, 0)
+version_main = (0, 4, 0)
 version_beta = ('beta', 1)
 isBeta = True
 
