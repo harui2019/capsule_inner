@@ -1,7 +1,7 @@
 # General Error
 
-class MoriError(Exception):
-    """Base class for errors raised by Mori."""
+class CapSuleError(Exception):
+    """Base class for errors raised by :module:`capsule`."""
 
     def __init__(
         self,
@@ -14,11 +14,14 @@ class MoriError(Exception):
     def __str__(self):
         """Return the message."""
         return repr(self.message)
+    
+class CapSuleValuedError(CapSuleError, ValueError):
+    """ValueErrors raised by :module:`capsule."""
 
 
 # General Warning
-class MoriWarning(Warning):
-    """Base class for warning raised by Mori."""
+class CapSuleWarning(Warning):
+    """Base class for warning raised by :module:`capsule."""
 
     def __init__(
         self,

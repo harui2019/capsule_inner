@@ -1,0 +1,1 @@
+from .hoshi import Hoshi

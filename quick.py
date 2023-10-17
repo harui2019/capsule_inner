@@ -3,7 +3,7 @@ from typing import Union, Iterable, Literal, Optional
 import json
 
 from .jsonablize import quickJSONExport, Parse
-from .csvlist import singleColCSV
+from .mori.csvlist import singleColCSV
 
 
 def quickJSON(
