@@ -1,10 +1,14 @@
+"""A quick way to create .gitignore
+"""
 import os
 from pathlib import Path
 from typing import Union
 
 
-class syncControl(list[str]):
-    __version__ = (0, 3, 1)
+class GitSyncControl(list[str]):
+    """A gitignore file generator."""
+
+    __version__ = (0, 3, 2)
     """A quick way to create .gitignore
 
     Args:
@@ -30,9 +34,9 @@ class syncControl(list[str]):
                 self.append(line)
                 return True
             return False
-        else:
-            self.append(line)
-            return True
+
+        self.append(line)
+        return True
 
     def ignore(
         self,
@@ -124,7 +128,7 @@ class syncControl(list[str]):
         openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
         openArgs = {**self.defaultOpenArgs, **openArgs}
         openArgs['mode'] = 'r'
-        
+
         if isinstance(saveLocation, (Path)):
             ...
         elif isinstance(saveLocation, (str)):
@@ -144,7 +148,7 @@ class syncControl(list[str]):
                     elif takeDuplicate:
                         self.append(newLine)
             return True
-        else:
-            if not ignoreForNotfound:
-                raise FileNotFoundError("The .gitignore is not found.")
-            return False
+
+        if not ignoreForNotfound:
+            raise FileNotFoundError("The .gitignore is not found.")
+        return False

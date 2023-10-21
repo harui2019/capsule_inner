@@ -1,3 +1,6 @@
+"""
+Single column csv file.
+"""
 from typing import Optional, TypeVar, Union, NamedTuple
 from pathlib import Path
 import os
@@ -7,7 +10,10 @@ import glob
 T = TypeVar('T')
 
 
-class singleColCSV(list[T]):
+class SingleColumnCSV(list[T]):
+    """A single column csv file. 
+    """
+
     __version__ = (0, 3, 1)
     __name__ = 'singleCol'
 
@@ -34,19 +40,21 @@ class singleColCSV(list[T]):
     defaultPrintArgs = {
     }
 
-    class params(NamedTuple):
+    class Params(NamedTuple):
+        """Parameters for :func:`export` function.
+        """
         openArgs: dict
         printArgs: dict
         saveLocation: Path
 
     @classmethod
-    def paramsControl(
+    def params_control(
         cls,
         openArgs: dict = defaultOpenArgs,
         printArgs: dict = defaultPrintArgs,
         saveLocation: Union[Path, str] = Path('./'),
         isReadOnly: bool = False,
-    ) -> params:
+    ) -> Params:
         """Handling all arguments.
 
         Args:
@@ -66,10 +74,10 @@ class singleColCSV(list[T]):
             isReadOnly (bool, optional):
                 Is reading a file of `tagList` exportation. Defaults to False.
 
-
         Returns:
             dict[str, dict[str, str]]: Current arguments.
         """
+        
 
         # working args
         printArgs = {k: v for k, v in printArgs.items() if k != 'file'}
@@ -89,7 +97,7 @@ class singleColCSV(list[T]):
         if not os.path.exists(saveLocation):
             raise FileNotFoundError(f"Such location not found: {saveLocation}")
 
-        return cls.params(
+        return cls.Params(
             saveLocation=saveLocation,
             openArgs=openArgs,
             printArgs=printArgs
@@ -133,7 +141,7 @@ class singleColCSV(list[T]):
             Path: The path of exported file.
         """
 
-        args = self.paramsControl(
+        args = self.params_control(
             openArgs=openArgs,
             printArgs=printArgs,
             saveLocation=saveLocation,
@@ -199,7 +207,7 @@ class singleColCSV(list[T]):
             Path: The path of exported file.
         """
 
-        args = cls.paramsControl(
+        args = cls.params_control(
             openArgs=openArgs,
             printArgs=printArgs,
             saveLocation=saveLocation,

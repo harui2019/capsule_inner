@@ -3,7 +3,7 @@ from typing import Union, Iterable, Literal, Optional
 import json
 
 from .jsonablize import quickJSONExport, Parse
-from .mori.csvlist import singleColCSV
+from .mori.csvlist import SingleColumnCSV
 
 
 def quickJSON(
@@ -58,7 +58,7 @@ def quickListCSV(
     if jsonablize:
         content = [Parse(v) for v in content]
 
-    tmpSingleColCSV = singleColCSV(content)
+    tmpSingleColCSV = SingleColumnCSV(content)
     openArgs = {
         'mode': mode,
         'encoding': encoding,
