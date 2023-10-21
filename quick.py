@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Union, Iterable, Literal, Optional
 import json
 
-from .jsonablize import quickJSONExport, Parse
+from .jsonablize import quickJSONExport, parse
 from .mori.csvlist import SingleColumnCSV
 
 
@@ -56,7 +56,7 @@ def quickListCSV(
     if not isinstance(saveLocation, Path):
         saveLocation = Path(saveLocation)
     if jsonablize:
-        content = [Parse(v) for v in content]
+        content = [parse(v) for v in content]
 
     tmpSingleColCSV = SingleColumnCSV(content)
     openArgs = {

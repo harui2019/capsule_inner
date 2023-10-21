@@ -4,7 +4,7 @@
 
 from typing import NamedTuple, Optional, Callable, Type, Any
 from collections import namedtuple
-from ..jsonablize import Parse as jsonablize
+from ..jsonablize import parse as jsonablize
 
 
 class DefaultConfig():

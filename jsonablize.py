@@ -5,7 +5,7 @@ from collections import OrderedDict
 from pathlib import Path
 
 
-def valueParse(v: Any) -> Union[Iterable, str, int, float, bool, None]:
+def value_parse(v: Any) -> Union[Iterable, str, int, float, bool, None]:
     """Make value json-allowable. If a value is not allowed by json, them return its '__str__'.
 
     Args:
@@ -22,7 +22,7 @@ def valueParse(v: Any) -> Union[Iterable, str, int, float, bool, None]:
         return str(v)
 
 
-def keyParse(k: Any) -> Union[str, int, float, bool, None]:
+def key_parse(k: Any) -> Union[str, int, float, bool, None]:
     """Make key json-allowable. If a value is not allowed by json, them return its '__str__'.
 
     str, int, float, bool or None
@@ -44,7 +44,7 @@ def keyParse(k: Any) -> Union[str, int, float, bool, None]:
     return parsed
 
 
-def Parse(o: Any) -> Any:
+def parse(o: Any) -> Any:
     """Make a python object json-allowable.
 
     Args:
@@ -55,18 +55,18 @@ def Parse(o: Any) -> Any:
     """
 
     if isinstance(o, list):
-        parsed = [Parse(v) for v in o]
+        parsed = [parse(v) for v in o]
     elif isinstance(o, tuple):
-        parsed = [Parse(v) for v in o]
+        parsed = [parse(v) for v in o]
     elif isinstance(o, dict):
-        parsed = {keyParse(k): Parse(v) for k, v in o.items()}
+        parsed = {key_parse(k): parse(v) for k, v in o.items()}
     else:
-        parsed = valueParse(o)
+        parsed = value_parse(o)
 
     return parsed
 
 
-def sortHashableAhead(o: dict) -> dict:
+def sort_hashable_ahead(o: dict) -> dict:
     """Make hashable values be the ahead in dictionary."
 
     Args:
@@ -103,12 +103,12 @@ def quickJSONExport(
         saveLocation = Path(saveLocation)
     if not os.path.exists(saveLocation):
         os.makedirs(saveLocation)
-    saveLocWName = saveLocation / filename
+    save_loc_w_name = saveLocation / filename
 
-    with open(saveLocWName, mode, encoding=encoding) as File:
+    with open(save_loc_w_name, mode, encoding=encoding) as file:
         if jsonablize:
-            json.dump(Parse(content), File, indent=indent, ensure_ascii=False)
+            json.dump(parse(content), file, indent=indent, ensure_ascii=False)
         else:
-            json.dump(content, File, indent=indent, ensure_ascii=False)
+            json.dump(content, file, indent=indent, ensure_ascii=False)
         if not mute:
-            print(f"'{saveLocWName}' exported successfully.")
+            print(f"'{save_loc_w_name}' exported successfully.")

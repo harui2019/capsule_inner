@@ -7,7 +7,7 @@ import csv
 import glob
 import warnings
 
-from ..jsonablize import Parse
+from ..jsonablize import parse
 
 K = TypeVar('K')
 T = TypeVar('T')
@@ -311,7 +311,7 @@ class TagList(defaultdict[Hashable, list[T]]):
 
         if filetype == 'json':
             with open(saveLocation / filename, **openArgs) as ExportJson:
-                json.dump(Parse(self), ExportJson, **jsonDumpArgs)
+                json.dump(parse(self), ExportJson, **jsonDumpArgs)
 
         elif filetype == 'csv':
             with open(saveLocation / filename, **openArgs, newline='') as ExportCsv:

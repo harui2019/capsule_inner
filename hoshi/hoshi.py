@@ -1,6 +1,3 @@
-from typing import Optional, Union, NamedTuple, Literal, Any, overload
-import pprint
-
 """
 
 - Before:
@@ -49,6 +46,8 @@ Hoshi - A process content printer ?
 
     (Hint: The last sentence is auto-complete by Github Copilot from 'Hoshimachi' to the end. That's meaning that Github Copilot knows VTuber, Hololive, even Suisei, who trains it with such content and how. "Does Skynet subscribe to Virtual Youtuber?")
 """
+from typing import Optional, Union, NamedTuple, Literal, Any, overload
+import pprint
 
 
 def hnprint(title, heading=3, raw_input=False):
@@ -334,7 +333,7 @@ class Hoshi:
             (Hint: The last sentence is auto-complete by Github Copilot from 'Hoshimachi' to the end. That's meaning that Github Copilot knows VTuber, Hololive, even Suisei, who trains it with such content and how. "Does Skynet subscribe to Virtual Youtuber?")
         """
 
-        self.__name__ = 'Hoshi'
+        self.__name__ = name
         self._raw = []
         for item in raw:
             if isinstance(item, (tuple, list)):
