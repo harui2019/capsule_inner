@@ -1,16 +1,24 @@
-from typing import NamedTuple, Optional, Callable, Iterable, Any
+"""Configuration for multiple experiment.
+
+"""
+
+from typing import NamedTuple, Optional, Callable, Type, Any
 from collections import namedtuple
 from ..jsonablize import Parse as jsonablize
 
 
 class DefaultConfig():
-    __version__ = (0, 2, 0)
+    """Default configuration for multiple experiment.
+
+    """
+
+    __version__ = (0, 3, 0)
 
     def __init__(
         self,
-        default: dict[str, Any] = {},
-        name: str = "defaultConfig",
-        default_names: Iterable[str] = [],
+        name: str,
+        default: dict[str, Any],
+        default_type: Optional[dict[str, Type]] = None,
     ) -> None:
         """Set the default parameters dictionary for multiple experiment.
 
@@ -22,19 +30,26 @@ class DefaultConfig():
         """
 
         self.__name__ = name
+        self.__annotations__: dict[str, Type] = {}
         self.default = {}
 
-        for k in default_names:
-            self.default[k] = None
-        for k in default:
+        if default_type is None:
+            default_type = {}
+
+        for k in default.keys():
+            if k in default_type:
+                self.__annotations__[k] = default_type[k]
+                self.default[k] = None
+            else:
+                self.__annotations__[k] = Any
             self.default[k] = default[k]
 
-        self.namedtupleType = namedtuple(
+        self.namedtuple = namedtuple(
             field_names=self.default.keys(),
             typename=self.__name__,
             defaults=self.default.values(),
         )
-        self.default_names = self.namedtupleType._fields
+        self.default_names = self.namedtuple._fields
 
     def __call__(
         self,
@@ -53,7 +68,7 @@ class DefaultConfig():
 
     def _handle_input(
         self,
-        inputObject: Optional[dict[Any]] = None
+        input_object: dict[Any],
     ) -> None:
         """Check the input for :meth:`.check` and :meth:`.ready`.
 
@@ -66,34 +81,37 @@ class DefaultConfig():
             TypeError: When Input is not a dict.
         """
 
-        if inputObject == None:
-            raise ValueError("Input can not be null.")
-        elif isinstance(inputObject, dict):
-            ...
-        else:
+        if not isinstance(input_object, dict):
             raise TypeError("Input must be a dict.")
 
     def make(
         self,
-        __values: dict[str, Any] = {},
         *args: list[str],
-        partial: list[str] = [],
+        __values: Optional[dict[str, Any]] = None,
+        partial: Optional[list[str]] = None,
         jsonable: bool = False,
     ) -> dict[str, Any]:
         """Export a dictionary of configuration.
 
         Args:
-            __values (dict[str, Any], optional): Additonal object. Defaults to `{}`.
-            args (list[str], optional): Positional arguments handler.
-            partial (list[str], optional): Export parts of configuration. Defaults to `[]` as exporting all.
-            jsonable (bool, optional): Whether to make the configuration jsonable. Defaults to `False`.
+            __values (dict[str, Any], optional): Additonal object. Defaults to `None`
+            partial (list[str], optional): 
+                Export parts of configuration. Defaults to `None` as exporting all.
+            jsonable (bool, optional): 
+                Whether to make the configuration jsonable. Defaults to `False`.
 
         Returns:
             dict[str, Any]: A dictionary of configuration.
         """
         if len(args) > 0:
             raise ValueError(
-                "Only allow one positional argument to be passed, which is dictionary for configuration.")
+                "Only allow one positional argument to be passed, " +
+                "which is dictionary for configuration.")
+
+        if __values is None:
+            __values = {}
+        if partial is None:
+            partial = []
 
         config = {
             **self.default,
@@ -102,23 +120,24 @@ class DefaultConfig():
 
         if jsonable:
             config = jsonablize(config)
-
         if len(partial) == 0:
             return config
-        else:
-            return {
-                k: v for k, v in config.items()
-                if k in partial
-            }
+
+        return {
+            k: v for k, v in config.items()
+            if k in partial
+        }
 
     def as_dict(self, *args, **kwargs) -> dict[str, Any]:
         """Export configuration as a dictionary, the alternative name of :method:`make`.
 
         Args:
-            __values (dict[str, Any], optional): Additonal object. Defaults to `{}`.
+            __values (dict[str, Any]): Additonal object.
             args (list[str], optional): Positional arguments handler.
-            partial (list[str], optional): Export parts of configuration. Defaults to `[]` as exporting all.
-            jsonable (bool, optional): Whether to make the configuration jsonable. Defaults to `False`.
+            partial (list[str], optional): 
+                Export parts of configuration. Defaults to `None` as exporting all.
+            jsonable (bool, optional): 
+                Whether to make the configuration jsonable. Defaults to `False`.
 
         Returns:
             dict[str, Any]: A dictionary of configuration.
@@ -127,7 +146,7 @@ class DefaultConfig():
 
     def as_namedtuple(
         self,
-        __values: dict[str, Any] = {},
+        __values: dict[str, Any],
     ) -> NamedTuple:
         """Export configuration as a namedtuple.
 
@@ -138,43 +157,49 @@ class DefaultConfig():
             _type_: _description_
         """
 
-        return self.namedtupleType(**__values)
+        return self.namedtuple(**__values)
 
     def is_ready(
         self,
-        target: dict[str, Any] = {},
-        ignores: list[str] = [],
+        target: dict[str, Any],
+        ignores: Optional[list[str]] = None,
     ) -> bool:
         """Check whether the configuration is completed.
 
         Args:
-            target (dict): The configuration want to check. Defaults to {}.
+            target (dict[str, Any]): The configuration want to check.
             ignores (list[str], optional): The keys to be ignored. Defaults to [].
 
         Returns:
             bool: Whether the configuration is completed
         """
         self._handle_input(target)
-        return all(k in target or k in ignores for k in self.namedtupleType._fields)
+        if ignores is None:
+            ignores = []
+        return all(k in target or k in ignores for k in self.namedtuple._fields)
 
     def conclude_keys(
         self,
-        target: dict[str, Any] = {},
-        excepts: list[str] = [],
+        target: dict[str, Any],
+        excepts: Optional[list[str]] = None,
     ) -> dict[str, list[str]]:
-        """Giving the list of keys include and exclude in the configuration from the given dictionary.
+        """Giving the list of keys include and exclude 
+        in the configuration from the given dictionary.
 
         Args:
-            target (dict): The configuration want to check. Defaults to {}.
+            target (dict[str, Any]): The configuration want to check.
             excepts (list[str], optional): The exceptions. Defaults to [].
 
         Returns:
             dict[str, list[str]]: The contained and uncontained keys of the configuration.
         """
         self._handle_input(target)
+        if excepts is None:
+            excepts = []
+
         includes = []
         excludes = []
-        for k in self.namedtupleType._fields:
+        for k in self.namedtuple._fields:
             if (k in target or k in excepts):
                 includes.append(k)
             else:
@@ -184,57 +209,66 @@ class DefaultConfig():
 
     def exclude_keys(
         self,
-        target: dict[str, Any] = {},
-        excepts: list[str] = [],
+        target: dict[str, Any],
+        excepts: Optional[list[str]] = None,
     ) -> list[str]:
         """Giving the list of keys include in the configuration from the given dictionary.
 
         Args:
-            target (dict): The configuration want to check. Defaults to {}.
+            target (dict[str, Any]): The configuration want to check.
             excepts (list[str], optional): The exceptions. Defaults to [].
 
         Returns:
             list: The uncontained keys of the configuration.
         """
+        self._handle_input(target)
+        if excepts is None:
+            excepts = []
         return self.conclude_keys(target, excepts)['exclude']
 
     def include_keys(
         self,
-        target: dict[str, Any] = {},
-        excepts: list[str] = [],
+        target: dict[str, Any],
+        excepts: Optional[list[str]] = None,
     ) -> list[str]:
         """Giving the list of keys include in the configuration from the given dictionary.
 
         Args:
-            target (dict): The configuration want to check. Defaults to {}.
+            target (dict[str, Any]): The configuration want to check.
             excepts (list[str], optional): The exceptions. Defaults to [].
 
         Returns:
             list: The contained keys of the configuration.
         """
+        self._handle_input(target)
+        if excepts is None:
+            excepts = []
         return self.conclude_keys(target, excepts)['include']
 
     def useless_keys(
         self,
-        target: dict[str, Any] = {},
-        ignores: list[str] = [],
+        target: dict[str, Any],
+        ignores: Optional[list[str]] = None,
     ) -> list[str]:
         """Giving the list of keys which is useless from the given dictionary.
 
         Args:
-            target (dict): The configuration want to check. Defaults to {}.
+            target (dict[str, Any]): The configuration want to check.
             ignores (list[str], optional): The fields to be ignored. Defaults to [].
 
         Returns:
             list: The contained keys of the configuration.
         """
         self._handle_input(target)
+        if ignores is None:
+            ignores = []
+
         uselesskeylist = []
         for k in target:
-            if not (k in self.namedtupleType._fields or k in ignores):
+            if not (k in self.namedtuple._fields or k in ignores):
                 uselesskeylist.append(k)
 
         return uselesskeylist
 
     def __repr__(self):
-        return f"{self.namedtupleType()}"
+        return f"{self.namedtuple()}"
