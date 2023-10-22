@@ -95,13 +95,16 @@ def divider(length: int = 60, raw_input=False):
     return content
 
 
-def txt(text: str, listing_level: int = 1, raw_input=False):
+def txt(text: str, listing_level: int = 1, raw_input=False) -> str:
     """Print a text.
 
     Args:
         text (str): Text to print.
         listing_level (int, optional): Listing level. Defaults to 1.
         raw_input (bool, optional): If True, return a dict. Defaults to False.
+        
+    Returns:
+        str: Text to print.
     """
 
     if raw_input:
@@ -353,7 +356,7 @@ class Hoshi:
             else:
                 self._raw.append(('txt', item))
 
-        self._config = self.ConfigContainer({
+        self._config = self.ConfigContainer(**{
             'listing_level': 1,
             'listing_itemize': '-',
             'ljust_description_len': 0,
