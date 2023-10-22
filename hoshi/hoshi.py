@@ -3,7 +3,8 @@
 - Before:
         
 >>> print(" ### Qiskit version outdated warning")
->>> print("Please keep mind on your qiskit version, an very outdated version may cause some problems.")
+>>> print("Please keep mind on your qiskit version, 
+an very outdated version may cause some problems.")
 >>> print(" - Local Qiskit version ".ljust(40, '-')+f" {__qiskit_version__['qiskit']}")
 >>> print(" - Latest Qiskit version ".ljust(40, '-')+f" {latest_version}")
 ```     
@@ -18,7 +19,8 @@ Please keep mind on your qiskit version, an very outdated version may cause some
 >>> check_msg = Hoshi([
         ('divider', 60),
         ('h3', 'Qiskit version outdated warning'),
-        ('txt', "Please keep mind on your qiskit version, an very outdated version may cause some problems."),
+        ('txt', "Please keep mind on your qiskit version, 
+        an very outdated version may cause some problems."),
         ('itemize', 'Local Qiskit version', __qiskit_version__['qiskit']),
         {
             'type': 'itemize',
@@ -42,9 +44,15 @@ Please keep mind on your qiskit version, an very outdated version may cause some
 Hoshi - A process content printer ?
 
 ## Why this name?
-    I made it when I was listening the songs made by Hoshimachi Suisei, a VTuber in Hololive. I was inspired by her songs, and I made this tool. I named it Hoshi, which means star in Japanese. I hope this tool can help you to make your code more beautiful.
+    I made it when I was listening the songs made by Hoshimachi Suisei, 
+    a VTuber in Hololive. I was inspired by her songs, and I made this tool. 
+    I named it Hoshi, which means star in Japanese. 
+    I hope this tool can help you to make your code more beautiful.
 
-    (Hint: The last sentence is auto-complete by Github Copilot from 'Hoshimachi' to the end. That's meaning that Github Copilot knows VTuber, Hololive, even Suisei, who trains it with such content and how. "Does Skynet subscribe to Virtual Youtuber?")
+    (Hint: The last sentence is auto-complete by Github Copilot from 'Hoshimachi' to the end. 
+    That's meaning that Github Copilot knows VTuber, Hololive, even Suisei, 
+    who trains it with such content and how. 
+    "Does Skynet subscribe to Virtual Youtuber?")
 """
 from typing import Optional, Union, NamedTuple, Literal, Any, overload
 import pprint
@@ -67,9 +75,8 @@ def hnprint(title, heading=3, raw_input=False):
             'heading': heading,
             'title': title,
         }
-    else:
-        content = " "+"#"*heading+" {}".format(title)
-        return content
+    content = " "+"#"*heading+f" {title}"
+    return content
 
 
 def divider(length: int = 60, raw_input=False):
@@ -84,27 +91,43 @@ def divider(length: int = 60, raw_input=False):
             'type': 'divider',
             'length': length,
         }
-    else:
-        content = "-"*length
-        return content
+    content = "-"*length
+    return content
 
 
 def txt(text: str, listing_level: int = 1, raw_input=False):
+    """Print a text.
+
+    Args:
+        text (str): Text to print.
+        listing_level (int, optional): Listing level. Defaults to 1.
+        raw_input (bool, optional): If True, return a dict. Defaults to False.
+    """
+
     if raw_input:
         return {
             'type': 'txt',
             'listing_level': listing_level,
             'text': text,
         }
-    else:
-        return (" "*(2*listing_level-1))+str(text)
+    return (" "*(2*listing_level-1))+str(text)
 
 
-def _ljustFilling(
+def _ljust_filling(
     previous: str,
     length: Optional[int] = None,
     filler: str = '-',
 ) -> tuple[str, int]:
+    """Ljust filling.
+
+    Args:
+        previous (str): The previous string.
+        length (Optional[int], optional): Filling length. Defaults to None.
+        filler (str, optional): Filling character. Defaults to '-'.
+
+    Returns:
+        tuple[str, int]: Filled string and the length of the filled string.
+    """
 
     previous = str(previous)
     if length is None or length == 0:
@@ -182,27 +205,27 @@ def itemize(
         if len(value) > max_value_len:
             value = value[:max_value_len]+'...'
 
-        subscribe_str, ljust_description_len = _ljustFilling(
+        subscribe_str, ljust_description_len = _ljust_filling(
             previous=description,
             length=ljust_description_len,
             filler=ljust_description_filler
         )
         content += (" "*(2*listing_level-1) +
-                    "{} {}".format(listing_itemize, subscribe_str))
+                    f"{listing_itemize} {subscribe_str}")
     else:
         content += (" "*(2*listing_level-1) +
-                    "{} {}".format(listing_itemize, description))
+                    f"{listing_itemize} {description}")
 
     if (not hint is None) and (hint != ''):
         hint = str(hint)
         if not value is None:
-            value_str, ljust_value_len = _ljustFilling(
+            value_str, ljust_value_len = _ljust_filling(
                 previous=value,
                 length=ljust_value_len,
                 filler=ljust_value_filler
             )
         else:
-            value_str, ljust_value_len = _ljustFilling(
+            value_str, ljust_value_len = _ljust_filling(
                 previous='',
                 length=ljust_value_len,
                 filler=ljust_value_filler
@@ -219,23 +242,22 @@ def itemize(
 
     if export_len:
         return content, ljust_description_len, ljust_value_len
-    else:
-        if brokelinehint != '':
-            if independent_newline:
-                return content, brokelinehint
-            else:
-                return content+brokelinehint
-        else:
-            return content
+    if brokelinehint != '':
+        if independent_newline:
+            return content, brokelinehint
+        return content+brokelinehint
+    return content
 
 
 class Hoshi:
+    """Hoshi - A process content printer ?"""
 
     _availablePrint = ['h1', 'h2', 'h3', 'h4',
                        'h5', 'h6', 'txt', 'itemize', 'divider']
     __name__ = 'Hoshi'
 
-    class _config_container(NamedTuple):
+    class ConfigContainer(NamedTuple):
+        """Config container for Hoshi. """
         # itemize
         listing_level: int = 1
         listing_itemize: str = '-'
@@ -251,7 +273,8 @@ class Hoshi:
         divider_length: int = 60
 
         @property
-        def _itemize_fields(self) -> tuple[str, ...]:
+        def itemize_fields(self) -> tuple[str, ...]:
+            """Return a list of itemize fields. """
             return (
                 'listing_level',
                 'listing_itemize',
@@ -265,24 +288,14 @@ class Hoshi:
             )
 
         @property
-        def _divider_fields(self) -> tuple[str, ...]:
+        def divider_fields(self) -> tuple[str, ...]:
+            """Return a list of divider fields. """
             return ('divider_length', )
 
     def __init__(
         self,
-        raw: list[tuple[str]] = [],
+        raw: Optional[list[tuple[str]]] = None,
         name: str = 'Hoshi',
-
-        listing_level: int = 1,
-        listing_itemize: str = '-',
-        ljust_description_len: int = 0,
-        ljust_description_filler: str = '-',
-        ljust_value_len: int = 0,
-        ljust_value_filler: str = '.',
-        ljust_value_max_len: int = 40,
-        hint_itemize: str = '#',
-        max_value_len: int = 2000,
-        divider_length: int = 60,
         **kwargs
     ):
         """
@@ -290,7 +303,8 @@ class Hoshi:
         - Before:
 
         >>> print(" ### Qiskit version outdated warning")
-        >>> print("Please keep mind on your qiskit version, an very outdated version may cause some problems.")
+        >>> print("Please keep mind on your qiskit version, 
+        an very outdated version may cause some problems.")
         >>> print(" - Local Qiskit version ".ljust(40, '-')+f" {__qiskit_version__['qiskit']}")
         >>> print(" - Latest Qiskit version ".ljust(40, '-')+f" {latest_version}")
         ```     
@@ -305,7 +319,8 @@ class Hoshi:
         >>> check_msg = Hoshi([
                 ('divider', 60),
                 ('h3', 'Qiskit version outdated warning'),
-                ('txt', "Please keep mind on your qiskit version, an very outdated version may cause some problems."),
+                ('txt', "Please keep mind on your qiskit version, 
+                an very outdated version may cause some problems."),
                 ('itemize', 'Local Qiskit version', __qiskit_version__['qiskit']),
                 {
                     'type': 'itemize',
@@ -318,23 +333,12 @@ class Hoshi:
         >>> print(check_msg)
 
         ```
-
-        ------------------------------------------------------------
-         ### Qiskit version outdated warning
-         Please keep mind on your qiskit version, an very outdated version may cause some problems.
-         - Local Qiskit version ------------------- 0.39.0
-         - Latest Qiskit version ------------------ 0.39.0
-        ```
-        Hoshi - A process content printer ?
-
-        ## Why this name?
-            I made it when I was listening the songs made by Hoshimachi Suisei, a VTuber in Hololive. I was inspired by her songs, and I made this tool. I named it Hoshi, which means star in Japanese. I hope this tool can help you to make your code more beautiful.
-
-            (Hint: The last sentence is auto-complete by Github Copilot from 'Hoshimachi' to the end. That's meaning that Github Copilot knows VTuber, Hololive, even Suisei, who trains it with such content and how. "Does Skynet subscribe to Virtual Youtuber?")
         """
 
         self.__name__ = name
         self._raw = []
+        if raw is None:
+            raw = []
         for item in raw:
             if isinstance(item, (tuple, list)):
                 if item[0] in self._availablePrint:
@@ -349,30 +353,43 @@ class Hoshi:
             else:
                 self._raw.append(('txt', item))
 
-        self._config = self._config_container(**{
-            'listing_level': listing_level,
-            'listing_itemize': listing_itemize,
-            'ljust_description_len': ljust_description_len,
-            'ljust_description_filler': ljust_description_filler,
-            'ljust_value_len': ljust_value_len,
-            'ljust_value_filler': ljust_value_filler,
-            'ljust_value_max_len': ljust_value_max_len,
-            'max_value_len': max_value_len,
-            'hint_itemize': hint_itemize,
-
-            'divider_length': divider_length,
+        self._config = self.ConfigContainer({
+            'listing_level': 1,
+            'listing_itemize': '-',
+            'ljust_description_len': 0,
+            'ljust_description_filler': '-',
+            'ljust_value_len': 0,
+            'ljust_value_filler': '.',
+            'ljust_value_max_len': 40,
+            'hint_itemize': '#',
+            'max_value_len': 2000,
+            'divider_length': 60,
+            **kwargs,
         })
         self._update()
 
     def _item_input_handler(
         self,
-        type: Literal['itemize'],
-        item_input: dict[str, Any] = {},
+        item_type: Literal['itemize'],
+        item_input: Optional[dict[str, Any]] = None,
         mode: Literal['add', 'config'] = 'add'
     ) -> dict[str, Any]:
+        """Item input handler.
 
-        if type == 'itemize':
-            for k in self._config._itemize_fields:
+        Args:
+            item_type (Literal['itemize']): Item type.
+            item_input (Optional[dict[str, Any]], optional): Item input. Defaults to None.
+            mode (Literal['add', 'config'], optional): Mode. Defaults to 'add'.
+
+        Returns:
+            dict[str, Any]: Item input.
+        """
+
+        if item_input is None:
+            item_input = {}
+
+        if item_type == 'itemize':
+            for k in self._config.itemize_fields:
                 item_input[k] = getattr(
                     self._config, k) if k not in item_input else item_input[k]
             if mode == 'config':
@@ -382,6 +399,9 @@ class Hoshi:
         return item_input
 
     def _update(self):
+        """Update the print lines.
+        """
+
         self._print_lines = []
         _formated = []
 
@@ -484,40 +504,72 @@ class Hoshi:
         return content
 
     def print(self):
+        """Print the content.
+        """
         self._update()
         for item in self._print_lines:
             print(item)
 
-    def newline(self, item):
+    def newline(self, item: Union[dict[str, Any], tuple[str]]):
+        """Add a new line.
+
+        Args:
+            item (Union[dict[str, Any], tuple[str]]): Item to add.
+        """
         self._raw.append(item)
 
     @property
     def lines(self) -> list[str]:
+        """Return the print lines.
+        """
         self._update()
         return self._print_lines
 
     def h1(self, text: str):
+        """Add a h1 title.
+        """
         self._raw.append(hnprint(text, heading=1, raw_input=True))
 
     def h2(self, text: str):
+        """Add a h2 title.
+        """
         self._raw.append(hnprint(text, heading=2, raw_input=True))
 
     def h3(self, text: str):
+        """Add a h3 title.
+        """
         self._raw.append(hnprint(text, heading=3, raw_input=True))
 
     def h4(self, text: str):
+        """Add a h4 title.
+        """
         self._raw.append(hnprint(text, heading=4, raw_input=True))
 
     def h5(self, text: str):
+        """Add a h5 title.
+        """
         self._raw.append(hnprint(text, heading=5, raw_input=True))
 
     def h6(self, text: str):
+        """Add a h6 title.
+        """
         self._raw.append(hnprint(text, heading=6, raw_input=True))
 
     def txt(self, text: str, listing_level: int = 1):
+        """Add a text.
+
+        Args:
+            text (str): Text to print.
+            listing_level (int, optional): Listing level. Defaults to 1.
+        """
         self._raw.append(txt(text, listing_level, raw_input=True))
 
     def divider(self, length: int = 60):
+        """Add a divider.
+
+        Args:
+            length (int, optional): Length of the divider. Defaults to 60.
+        """
         self._raw.append(divider(length, raw_input=True))
 
     def itemize(
@@ -527,6 +579,15 @@ class Hoshi:
         hint: str = None,
         listing_level: int = 1,
     ):
+        """Add a listing item.
+
+        Args:
+            description (str): Description of the item.
+            value (str, optional): Value of the item. Defaults to None.
+            hint (str, optional): Hint of the item. Defaults to None.
+            listing_level (int, optional): Listing level. Defaults to 1.
+        """
+
         self._raw.append({
             'type': 'itemize',
             'description': description,
