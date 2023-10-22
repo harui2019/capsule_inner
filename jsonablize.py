@@ -93,7 +93,7 @@ def quickJSONExport(
     mode: str,
     indent: int = 2,
     encoding: str = 'utf-8',
-    jsonablize: bool = False,
+    jsonable: bool = False,
 
     saveLocation: Union[Path, str] = Path('./'),
     mute: bool = False,
@@ -106,7 +106,7 @@ def quickJSONExport(
     save_loc_w_name = saveLocation / filename
 
     with open(save_loc_w_name, mode, encoding=encoding) as file:
-        if jsonablize:
+        if jsonable:
             json.dump(parse(content), file, indent=indent, ensure_ascii=False)
         else:
             json.dump(content, file, indent=indent, ensure_ascii=False)

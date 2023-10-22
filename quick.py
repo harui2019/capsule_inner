@@ -12,7 +12,7 @@ def quickJSON(
     mode: str,
     indent: int = 2,
     encoding: str = 'utf-8',
-    jsonablize: bool = False,
+    jsonable: bool = False,
 
     saveLocation: Union[Path, str] = Path('./'),
     mute: bool = False,
@@ -34,7 +34,7 @@ def quickJSON(
         mode=mode,
         indent=indent,
         encoding=encoding,
-        jsonablize=jsonablize,
+        jsonable=jsonable,
         saveLocation=saveLocation,
         mute=mute,
     )
@@ -47,7 +47,7 @@ def quickListCSV(
     encoding: str = 'utf-8',
 
     secondFilenameExt: Optional[str] = None,
-    jsonablize: bool = False,
+    jsonable: bool = False,
     saveLocation: Union[Path, str] = Path('./'),
 
     printArgs: dict = {},
@@ -55,7 +55,7 @@ def quickListCSV(
 
     if not isinstance(saveLocation, Path):
         saveLocation = Path(saveLocation)
-    if jsonablize:
+    if jsonable:
         content = [parse(v) for v in content]
 
     tmpSingleColCSV = SingleColumnCSV(content)
