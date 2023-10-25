@@ -1,4 +1,8 @@
-"""Configuration for multiple experiment.
+"""
+================================================================
+Configuration for multiple experiment. 
+(:mod:`qurry.capsule.mori.config`)
+================================================================
 
 """
 
