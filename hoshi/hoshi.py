@@ -1,4 +1,5 @@
 """
+# Hoshi - A process content printer ?
 
 - Before:
         
@@ -58,15 +59,16 @@ from typing import Optional, Union, NamedTuple, Literal, Any, overload
 import pprint
 
 
-def hnprint(title, heading=3, raw_input=False):
+def hnprint(title, heading=3, raw_input=False) -> Union[str, dict[str, Any]]:
     """Print a title.
 
     Args:
         title (str): tilte of the section.
         heading (int, optional): Heading level. Defaults to 3.
+        raw_input (bool, optional): If True, return a dict. Defaults to False.
 
     Returns:
-        _type_: _description_
+        Union[str, dict[str, Any]]: Content to print.
     """
 
     if raw_input:
@@ -79,11 +81,15 @@ def hnprint(title, heading=3, raw_input=False):
     return content
 
 
-def divider(length: int = 60, raw_input=False):
+def divider(length: int = 60, raw_input=False) -> Union[str, dict[str, Any]]:
     """Print a divider.
 
     Args:
         length (int, optional): Length of the divider. Defaults to 60.
+        raw_input (bool, optional): If True, return a dict. Defaults to False.
+        
+    Returns:
+        Union[str, dict[str, Any]]: Content to print.
     """
 
     if raw_input:
@@ -95,7 +101,7 @@ def divider(length: int = 60, raw_input=False):
     return content
 
 
-def txt(text: str, listing_level: int = 1, raw_input=False) -> str:
+def txt(text: str, listing_level: int = 1, raw_input=False) -> Union[str, dict[str, Any]]:
     """Print a text.
 
     Args:
@@ -104,7 +110,7 @@ def txt(text: str, listing_level: int = 1, raw_input=False) -> str:
         raw_input (bool, optional): If True, return a dict. Defaults to False.
         
     Returns:
-        str: Text to print.
+        Union[str, dict[str, Any]]: Content to print.
     """
 
     if raw_input:
@@ -190,12 +196,8 @@ def itemize(
     export_len: bool = False,
     independent_newline: bool = False,
 ):
-    """_summary_
+    """Print a listing item.
 
-    Args:
-        subscribe (str): _description_
-        value (Any): _description_
-        hint (str, optional): _description_. Defaults to ''.
     """
     description = str(description)
 
