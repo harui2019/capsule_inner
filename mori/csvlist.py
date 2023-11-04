@@ -1,5 +1,8 @@
 """
-Single column csv file.
+================================================================
+Single column csv file (:mod:`qurry.capsule.mori.csvlist`)
+================================================================
+
 """
 from typing import Optional, TypeVar, Union, NamedTuple
 from pathlib import Path
