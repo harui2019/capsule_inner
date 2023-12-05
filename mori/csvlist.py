@@ -48,14 +48,14 @@ class SingleColumnCSV(list[T]):
         """
         openArgs: dict
         printArgs: dict
-        saveLocation: Path
+        save_location: Path
 
     @classmethod
     def params_control(
         cls,
         openArgs: dict = defaultOpenArgs,
         printArgs: dict = defaultPrintArgs,
-        saveLocation: Union[Path, str] = Path('./'),
+        save_location: Union[Path, str] = Path('./'),
         isReadOnly: bool = False,
     ) -> Params:
         """Handling all arguments.
@@ -72,7 +72,7 @@ class SingleColumnCSV(list[T]):
                 The other arguments for :func:`print` function.
                 Defaults to :attr:`self.defaultPrintArgs`, which is:
                 >>> {}
-            saveLocation (Path, optional):
+            save_location (Path, optional):
                 The exported location. Defaults to `Path('./')`.
             isReadOnly (bool, optional):
                 Is reading a file of `tagList` exportation. Defaults to False.
@@ -90,18 +90,18 @@ class SingleColumnCSV(list[T]):
         if isReadOnly:
             openArgs['mode'] = 'r'
 
-        # saveLocation
-        if isinstance(saveLocation, (Path, str)):
-            saveLocation = Path(saveLocation)
+        # save_location
+        if isinstance(save_location, (Path, str)):
+            save_location = Path(save_location)
         else:
             raise ValueError(
-                "'saveLocation' needs to be the type of 'str' or 'Path'.")
+                "'save_location' needs to be the type of 'str' or 'Path'.")
 
-        if not os.path.exists(saveLocation):
-            raise FileNotFoundError(f"Such location not found: {saveLocation}")
+        if not os.path.exists(save_location):
+            raise FileNotFoundError(f"Such location not found: {save_location}")
 
         return cls.Params(
-            saveLocation=saveLocation,
+            save_location=save_location,
             openArgs=openArgs,
             printArgs=printArgs
         )
@@ -109,7 +109,7 @@ class SingleColumnCSV(list[T]):
     def export(
         self,
         name: Optional[str] = 'untitled',
-        saveLocation: Union[Path, str] = Path('./'),
+        save_location: Union[Path, str] = Path('./'),
         secondFilenameExt: Optional[str] = None,
 
         openArgs: dict = defaultOpenArgs,
@@ -121,7 +121,7 @@ class SingleColumnCSV(list[T]):
             name (str, optional): 
                 Name for this `tagList`.
                 Defaults to 'untitled'.
-            saveLocation (Path): The location of file.
+            save_location (Path): The location of file.
             additionName (Optional[str], optional): 
                 Name for this `tagList`, 
             secondFilenameExt (Optional[str], optional):
@@ -147,11 +147,11 @@ class SingleColumnCSV(list[T]):
         args = self.params_control(
             openArgs=openArgs,
             printArgs=printArgs,
-            saveLocation=saveLocation,
+            save_location=save_location,
         )
         printArgs = args.printArgs
         openArgs = args.openArgs
-        saveLocation = args.saveLocation
+        save_location = args.save_location
 
         if name is None:
             name = self.name
@@ -160,18 +160,18 @@ class SingleColumnCSV(list[T]):
             self.__name__ if secondFilenameExt is None else f"{secondFilenameExt}"
         ) + ".csv"
 
-        with open(saveLocation / filename, **openArgs, newline='') as ExportCsv:
+        with open(save_location / filename, **openArgs, newline='') as ExportCsv:
             taglistWriter = csv.writer(ExportCsv, quotechar='|')
             for v in self:
                 taglistWriter.writerow((v, ))
 
-        return saveLocation / filename
+        return save_location / filename
 
     @classmethod
     def read(
         cls,
         name: str,
-        saveLocation: Union[Path, str] = Path('./'),
+        save_location: Union[Path, str] = Path('./'),
         secondFilenameExt: Optional[str] = None,
 
         openArgs: dict = defaultOpenArgs,
@@ -185,7 +185,7 @@ class SingleColumnCSV(list[T]):
             name (str, optional): 
                 Name for this `tagList`.
                 Defaults to 'untitled'.
-            saveLocation (Path): The location of file.
+            save_location (Path): The location of file.
             additionName (Optional[str], optional): 
                 Name for this `tagList`, 
             secondFilenameExt (Optional[str], optional):
@@ -213,20 +213,20 @@ class SingleColumnCSV(list[T]):
         args = cls.params_control(
             openArgs=openArgs,
             printArgs=printArgs,
-            saveLocation=saveLocation,
+            save_location=save_location,
             isReadOnly=True,
         )
         printArgs = args.printArgs
         openArgs = args.openArgs
-        saveLocation = args.saveLocation
+        save_location = args.save_location
 
         secondFilenameExt = cls.__name__ if secondFilenameExt is None else f"{secondFilenameExt}"
 
-        lsLoc1 = glob.glob(str(saveLocation / f"*.{secondFilenameExt}.*"))
+        lsLoc1 = glob.glob(str(save_location / f"*.{secondFilenameExt}.*"))
         if len(lsLoc1) == 0:
             if notFoundRaise:
                 raise FileNotFoundError(
-                    f"The file '*.{secondFilenameExt}.*' not found at '{saveLocation}'.")
+                    f"The file '*.{secondFilenameExt}.*' not found at '{save_location}'.")
             else:
                 return cls(name=name)
 
@@ -236,7 +236,7 @@ class SingleColumnCSV(list[T]):
         if len(lsLoc2) < 1:
             if notFoundRaise:
                 raise FileNotFoundError(
-                    f"The file '{name}.'" + f"{secondFilenameExt}.csv"+f" not found at '{saveLocation}'.")
+                    f"The file '{name}.'" + f"{secondFilenameExt}.csv"+f" not found at '{save_location}'.")
             else:
                 return cls(name=secondFilenameExt)
         elif len(lsLoc2) > 1:
@@ -248,7 +248,7 @@ class SingleColumnCSV(list[T]):
         filename = Path(filename).name
         obj = None
 
-        with open(saveLocation / filename, **openArgs, newline='') as ReadCsv:
+        with open(save_location / filename, **openArgs, newline='') as ReadCsv:
             taglistReaper = csv.reader(ReadCsv, quotechar='|')
             obj = cls(
                 taglistReaper,

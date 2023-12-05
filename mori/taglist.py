@@ -173,7 +173,7 @@ class TagList(defaultdict[Hashable, list[T]]):
         openArgs: dict = defaultOpenArgs,
         printArgs: dict = defaultPrintArgs,
         jsonDumpArgs: dict = defaultJsonDumpArgs,
-        saveLocation: Union[Path, str] = Path('./'),
+        save_location: Union[Path, str] = Path('./'),
         filetype: _availableFileType = 'json',
         isReadOnly: bool = False,
     ) -> dict[str, dict[str, str]]:
@@ -197,7 +197,7 @@ class TagList(defaultdict[Hashable, list[T]]):
                 >>> {
                     'indent': 2,
                 }
-            saveLocation (Path, optional):
+            save_location (Path, optional):
                 The exported location. Defaults to `Path('./')`.
             filetype (Literal[&#39;json&#39;, &#39;csv&#39;], optional): 
                 Export type of `tagList`. Defaults to 'json'.
@@ -220,15 +220,15 @@ class TagList(defaultdict[Hashable, list[T]]):
                         if k != 'obj' or k != 'fp'}
         jsonDumpArgs = {**cls.defaultJsonDumpArgs, **jsonDumpArgs}
 
-        # saveLocation
-        if isinstance(saveLocation, (Path, str)):
-            saveLocation = Path(saveLocation)
+        # save_location
+        if isinstance(save_location, (Path, str)):
+            save_location = Path(save_location)
         else:
             raise ValueError(
-                "'saveLocation' needs to be the type of 'str' or 'Path'.")
+                "'save_location' needs to be the type of 'str' or 'Path'.")
 
-        if not os.path.exists(saveLocation):
-            raise FileNotFoundError(f"Such location not found: {saveLocation}")
+        if not os.path.exists(save_location):
+            raise FileNotFoundError(f"Such location not found: {save_location}")
 
         # file type check
         if not filetype in cls._availableFileType.__args__:
@@ -239,12 +239,12 @@ class TagList(defaultdict[Hashable, list[T]]):
             'openArgs': openArgs,
             'printArgs': printArgs,
             'jsonDumpArgs': jsonDumpArgs,
-            'saveLocation': saveLocation,
+            'save_location': save_location,
         }
 
     def export(
         self,
-        saveLocation: Union[Path, str] = Path('./'),
+        save_location: Union[Path, str] = Path('./'),
         tagListName: str = __name__,
         name: Optional[str] = None,
         filetype: _availableFileType = 'json',
@@ -256,7 +256,7 @@ class TagList(defaultdict[Hashable, list[T]]):
         """Export `tagList`.
 
         Args:
-            saveLocation (Path): The location of file.
+            save_location (Path): The location of file.
             tagListName (str, optional): 
                 Name for this `tagList`.
                 Defaults to :attr:`self.__name__`.
@@ -298,23 +298,23 @@ class TagList(defaultdict[Hashable, list[T]]):
             openArgs=openArgs,
             printArgs=printArgs,
             jsonDumpArgs=jsonDumpArgs,
-            saveLocation=saveLocation,
+            save_location=save_location,
             filetype=filetype,
         )
         printArgs = args['printArgs']
         openArgs = args['openArgs']
         jsonDumpArgs = args['jsonDumpArgs']
-        saveLocation = args['saveLocation']
+        save_location = args['save_location']
 
         filename = (
             f"" if name is None else f"{name}.") + f"{tagListName}.{filetype}"
 
         if filetype == 'json':
-            with open(saveLocation / filename, **openArgs) as ExportJson:
+            with open(save_location / filename, **openArgs) as ExportJson:
                 json.dump(parse(self), ExportJson, **jsonDumpArgs)
 
         elif filetype == 'csv':
-            with open(saveLocation / filename, **openArgs, newline='') as ExportCsv:
+            with open(save_location / filename, **openArgs, newline='') as ExportCsv:
                 tagListWriter = csv.writer(ExportCsv, quotechar='|')
                 for k, vs in self.items():
                     for v in vs:
@@ -323,12 +323,12 @@ class TagList(defaultdict[Hashable, list[T]]):
         else:
             warnings.warn("Exporting cancelled for no specified filetype.")
 
-        return saveLocation / filename
+        return save_location / filename
 
     @classmethod
     def read(
         cls,
-        saveLocation: Union[Path, str] = Path('./'),
+        save_location: Union[Path, str] = Path('./'),
         tagListName: str = __name__,
         name: Optional[str] = None,
         filetype: _availableFileType = 'json',
@@ -344,7 +344,7 @@ class TagList(defaultdict[Hashable, list[T]]):
         """Export `tagList`.
 
         Args:
-            saveLocation (Path): The location of file.
+            save_location (Path): The location of file.
             tagListName (str, optional): 
                 Name for this `tagList`.
                 Defaults to `tagList`.
@@ -387,17 +387,17 @@ class TagList(defaultdict[Hashable, list[T]]):
             openArgs=openArgs,
             printArgs=printArgs,
             jsonDumpArgs=jsonDumpArgs,
-            saveLocation=saveLocation,
+            save_location=save_location,
             filetype=filetype,
             isReadOnly=True,
         )
         printArgs = args['printArgs']
         openArgs = args['openArgs']
         jsonDumpArgs = args['jsonDumpArgs']
-        saveLocation = args['saveLocation']
+        save_location = args['save_location']
 
-        lsLoc11 = glob.glob(str(saveLocation / f"{tagListName}.*"))
-        lsLoc12 = glob.glob(str(saveLocation / f"*.{tagListName}.*"))
+        lsLoc11 = glob.glob(str(save_location / f"{tagListName}.*"))
+        lsLoc12 = glob.glob(str(save_location / f"*.{tagListName}.*"))
         if len(lsLoc11) == 0 and len(lsLoc12) == 0:
             lsLoc1 = []
         elif len(lsLoc11) == 0:
@@ -410,7 +410,7 @@ class TagList(defaultdict[Hashable, list[T]]):
         if len(lsLoc1) == 0:
             if notFoundRaise:
                 raise FileNotFoundError(
-                    f"The file '*.{tagListName}.*' not found at '{saveLocation}'.")
+                    f"The file '*.{tagListName}.*' not found at '{save_location}'.")
             else:
                 return cls(name=tagListName)
         lsLoc2 = [f for f in lsLoc1 if filetype in f]
@@ -420,7 +420,7 @@ class TagList(defaultdict[Hashable, list[T]]):
         if len(lsLoc2) < 1:
             if notFoundRaise:
                 raise FileNotFoundError("The file "+(
-                    f"" if name is None else f"{name}.") + f"{tagListName}.{filetype}"+f" not found at '{saveLocation}'.")
+                    f"" if name is None else f"{name}.") + f"{tagListName}.{filetype}"+f" not found at '{save_location}'.")
             else:
                 return cls(name=tagListName)
         elif len(lsLoc2) > 1:
@@ -433,7 +433,7 @@ class TagList(defaultdict[Hashable, list[T]]):
         obj = None
 
         if filetype == 'json':
-            with open(saveLocation / filename, **openArgs) as ReadJson:
+            with open(save_location / filename, **openArgs) as ReadJson:
                 rawData = json.load(ReadJson)
                 obj = cls(
                     o=rawData,
@@ -442,7 +442,7 @@ class TagList(defaultdict[Hashable, list[T]]):
                 )
 
         elif filetype == 'csv':
-            with open(saveLocation / filename, **openArgs, newline='') as ReadCsv:
+            with open(save_location / filename, **openArgs, newline='') as ReadCsv:
                 tagListReaper = csv.reader(ReadCsv, quotechar='|')
                 obj = cls(
                     name=tagListName,

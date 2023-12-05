@@ -6,40 +6,40 @@ from pathlib import Path
 
 class BasicHookArguments(NamedTuple):
     url: str
-    saveLocation: Path | str | None = None
+    save_location: Path | str | None = None
 
 
 class BasicHook(object):
     def __init__(
         self,
         url: str,
-        saveLocation: Path | str | None = None,
+        save_location: Path | str | None = None,
     ):
         self.config = BasicHookArguments(
             url=url,
-            saveLocation=saveLocation,
+            save_location=save_location,
         )
 
     def save(
         self,
-        saveLocation: Path | str = None,
+        save_location: Path | str = None,
     ) -> None:
 
-        if saveLocation is None:
-            saveLocation = self.config.saveLocation
-        if saveLocation is None:
-            raise ValueError("saveLocation cannot be None")
+        if save_location is None:
+            save_location = self.config.save_location
+        if save_location is None:
+            raise ValueError("save_location cannot be None")
 
-        if isinstance(saveLocation, str):
-            saveLocation = Path(saveLocation)
-        if not saveLocation.exists():
-            raise FileNotFoundError(f"{saveLocation} does not exist")
+        if isinstance(save_location, str):
+            save_location = Path(save_location)
+        if not save_location.exists():
+            raise FileNotFoundError(f"{save_location} does not exist")
 
         export = self.config._asdict()
-        if isinstance(export["saveLocation"], Path):
-            export["saveLocation"] = str(export["saveLocation"])
+        if isinstance(export["save_location"], Path):
+            export["save_location"] = str(export["save_location"])
 
-        with open(saveLocation, "wb") as f:
+        with open(save_location, "wb") as f:
             pickle.dump(export, f)
 
     def post(
@@ -68,20 +68,20 @@ class BasicHook(object):
     @classmethod
     def read(
         cls,
-        saveLocation: Path | str,
+        save_location: Path | str,
     ):
-        if saveLocation is None:
-            raise ValueError("saveLocation cannot be None")
-        if isinstance(saveLocation, str):
-            saveLocation = Path(saveLocation)
+        if save_location is None:
+            raise ValueError("save_location cannot be None")
+        if isinstance(save_location, str):
+            save_location = Path(save_location)
 
-        if not saveLocation.exists():
-            raise FileNotFoundError(f"{saveLocation} does not exist")
+        if not save_location.exists():
+            raise FileNotFoundError(f"{save_location} does not exist")
 
         export = {}
-        with open(saveLocation, "rb") as f:
+        with open(save_location, "rb") as f:
             export: dict[str, str] = pickle.load(f)
 
-        export["saveLocation"] = Path(saveLocation)
+        export["save_location"] = Path(save_location)
 
         return cls(**export)

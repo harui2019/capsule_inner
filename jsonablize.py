@@ -95,15 +95,15 @@ def quickJSONExport(
     encoding: str = 'utf-8',
     jsonable: bool = False,
 
-    saveLocation: Union[Path, str] = Path('./'),
+    save_location: Union[Path, str] = Path('./'),
     mute: bool = False,
 ) -> None:
 
-    if not isinstance(saveLocation, Path):
-        saveLocation = Path(saveLocation)
-    if not os.path.exists(saveLocation):
-        os.makedirs(saveLocation)
-    save_loc_w_name = saveLocation / filename
+    if not isinstance(save_location, Path):
+        save_location = Path(save_location)
+    if not os.path.exists(save_location):
+        os.makedirs(save_location)
+    save_loc_w_name = save_location / filename
 
     with open(save_loc_w_name, mode, encoding=encoding) as file:
         if jsonable:

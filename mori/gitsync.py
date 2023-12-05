@@ -70,7 +70,7 @@ class GitSyncControl(list[str]):
 
     def export(
         self,
-        saveLocation: Union[Path, str],
+        save_location: Union[Path, str],
         openArgs: dict = {
             'mode': 'w+',
         },
@@ -79,7 +79,7 @@ class GitSyncControl(list[str]):
         """Export .gitignore
 
         Args:
-            saveLocation (Path): The location of .gitignore.
+            save_location (Path): The location of .gitignore.
             openArgs (dict): The other arguments for :func:`open` function.
             printArgs (dict): The other arguments for :func:`print` function.
 
@@ -89,25 +89,25 @@ class GitSyncControl(list[str]):
         openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
         openArgs = {**self.defaultOpenArgs, **openArgs}
 
-        if isinstance(saveLocation, (Path)):
+        if isinstance(save_location, (Path)):
             ...
-        elif isinstance(saveLocation, (str)):
-            saveLocation = Path(saveLocation)
+        elif isinstance(save_location, (str)):
+            save_location = Path(save_location)
         else:
             raise TypeError(
-                "The saveLocation is not the type of 'str' or 'Path'.")
+                "The save_location is not the type of 'str' or 'Path'.")
 
-        if not os.path.exists(saveLocation):
-            raise FileNotFoundError("The saveLocation is not found.")
+        if not os.path.exists(save_location):
+            raise FileNotFoundError("The save_location is not found.")
 
         with open(
-            saveLocation / f".gitignore", **openArgs
+            save_location / f".gitignore", **openArgs
         ) as ignoreList:
             [print(item, file=ignoreList, **printArgs) for item in self]
 
     def read(
         self,
-        saveLocation: Union[Path, str],
+        save_location: Union[Path, str],
         takeDuplicate: bool = False,
         ignoreForNotfound: bool = True,
         openArgs: dict = {},
@@ -115,7 +115,7 @@ class GitSyncControl(list[str]):
         """ead existed .gitignore
 
         Args:
-            saveLocation (Path): The location of .gitignore.
+            save_location (Path): The location of .gitignore.
             openArgs (dict): The other arguments for :func:`open` function.
             ignoreForNotfound (bool, optional): Mute `FileNotFoundError` when .gitignore is not found. Defaults to True.
 
@@ -129,17 +129,17 @@ class GitSyncControl(list[str]):
         openArgs = {**self.defaultOpenArgs, **openArgs}
         openArgs['mode'] = 'r'
 
-        if isinstance(saveLocation, (Path)):
+        if isinstance(save_location, (Path)):
             ...
-        elif isinstance(saveLocation, (str)):
-            saveLocation = Path(saveLocation)
+        elif isinstance(save_location, (str)):
+            save_location = Path(save_location)
         else:
             raise TypeError(
-                "The saveLocation is not the type of 'str' or 'Path'.")
+                "The save_location is not the type of 'str' or 'Path'.")
 
-        if os.path.exists(saveLocation / '.gitignore'):
+        if os.path.exists(save_location / '.gitignore'):
             with open(
-                saveLocation / f".gitignore", **openArgs
+                save_location / f".gitignore", **openArgs
             ) as ignoreList:
                 for line in ignoreList.readlines():
                     newLine = line.strip()

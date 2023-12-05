@@ -14,7 +14,7 @@ def quickJSON(
     encoding: str = 'utf-8',
     jsonable: bool = False,
 
-    saveLocation: Union[Path, str] = Path('./'),
+    save_location: Union[Path, str] = Path('./'),
     mute: bool = False,
 ) -> None:
     """Configurable quick JSON export.
@@ -25,8 +25,9 @@ def quickJSON(
         mode (str): Mode for :func:`open` function.
         indent (int, optional): Indent length for json. Defaults to 2.
         encoding (str, optional): Encoding method. Defaults to 'utf-8'.
-        jsonablize (bool, optional): Whether to transpile all object to jsonable via :func:`mori.jsonablize`. Defaults to False.
-        saveLocation (Union[Path, str], optional): Location of files. Defaults to Path('./').
+        jsonablize (bool, optional): 
+            Whether to transpile all object to jsonable via :func:`mori.jsonablize`. Defaults to False.
+        save_location (Union[Path, str], optional): Location of files. Defaults to Path('./').
     """
     return quickJSONExport(
         content=content,
@@ -35,7 +36,7 @@ def quickJSON(
         indent=indent,
         encoding=encoding,
         jsonable=jsonable,
-        saveLocation=saveLocation,
+        save_location=save_location,
         mute=mute,
     )
 
@@ -48,13 +49,13 @@ def quickListCSV(
 
     secondFilenameExt: Optional[str] = None,
     jsonable: bool = False,
-    saveLocation: Union[Path, str] = Path('./'),
+    save_location: Union[Path, str] = Path('./'),
 
     printArgs: dict = {},
 ) -> None:
 
-    if not isinstance(saveLocation, Path):
-        saveLocation = Path(saveLocation)
+    if not isinstance(save_location, Path):
+        save_location = Path(save_location)
     if jsonable:
         content = [parse(v) for v in content]
 
@@ -65,7 +66,7 @@ def quickListCSV(
     }
 
     tmpSingleColCSV.export(
-        saveLocation=saveLocation,
+        save_location=save_location,
         name=filename,
         secondFilenameExt=secondFilenameExt,
         openArgs=openArgs,
@@ -75,7 +76,7 @@ def quickListCSV(
 
 def quickRead(
     filename: Union[str, Path],
-    saveLocation: Union[Path, str] = Path('./'),
+    save_location: Union[Path, str] = Path('./'),
     filetype: Literal['json', 'txt'] = 'json',
 
     encoding: str = 'utf-8'
@@ -89,13 +90,13 @@ def quickRead(
     Returns:
         str: Content of the file.
     """
-    if not isinstance(saveLocation, Path):
-        saveLocation = Path(saveLocation)
+    if not isinstance(save_location, Path):
+        save_location = Path(save_location)
 
     if filetype == 'json':
-        with open(saveLocation / filename, 'r', encoding=encoding) as File:
+        with open(save_location / filename, 'r', encoding=encoding) as File:
             return json.load(File)
 
     else:
-        with open(saveLocation / filename, 'r', encoding=encoding) as File:
+        with open(save_location / filename, 'r', encoding=encoding) as File:
             return File.read()
