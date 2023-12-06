@@ -92,13 +92,11 @@ def quickJSONExport(
     filename: Union[str, Path],
     mode: str,
     indent: int = 2,
-    encoding: str = 'utf-8',
+    encoding: str = "utf-8",
     jsonable: bool = False,
-
-    save_location: Union[Path, str] = Path('./'),
+    save_location: Union[Path, str] = Path("./"),
     mute: bool = False,
 ) -> None:
-
     if not isinstance(save_location, Path):
         save_location = Path(save_location)
     if not os.path.exists(save_location):

@@ -11,10 +11,8 @@ from collections import namedtuple
 from ..jsonablize import parse as jsonablize
 
 
-class DefaultConfig():
-    """Default configuration for multiple experiment.
-
-    """
+class DefaultConfig:
+    """Default configuration for multiple experiment."""
 
     __version__ = (0, 3, 0)
 
@@ -55,12 +53,7 @@ class DefaultConfig():
         )
         self.default_names = self.namedtuple._fields
 
-    def __call__(
-        self,
-        *args,
-        **kwargs
-    ) -> Callable:
-
+    def __call__(self, *args, **kwargs) -> Callable:
         return self.make(*args, **kwargs)
 
     def __getitem__(self, key) -> Any:
@@ -77,7 +70,7 @@ class DefaultConfig():
         """Check the input for :meth:`.check` and :meth:`.ready`.
 
         Args:
-            inputObject (Optional[dict[Any]], optional): 
+            inputObject (Optional[dict[Any]], optional):
                 Input. Defaults to None.
 
         Raises:
@@ -99,9 +92,9 @@ class DefaultConfig():
 
         Args:
             __values (dict[str, Any], optional): Additonal object. Defaults to `None`
-            partial (list[str], optional): 
+            partial (list[str], optional):
                 Export parts of configuration. Defaults to `None` as exporting all.
-            jsonable (bool, optional): 
+            jsonable (bool, optional):
                 Whether to make the configuration jsonable. Defaults to `False`.
 
         Returns:
@@ -109,8 +102,9 @@ class DefaultConfig():
         """
         if len(args) > 0:
             raise ValueError(
-                "Only allow one positional argument to be passed, " +
-                "which is dictionary for configuration.")
+                "Only allow one positional argument to be passed, "
+                + "which is dictionary for configuration."
+            )
 
         if __values is None:
             __values = {}
@@ -127,10 +121,7 @@ class DefaultConfig():
         if len(partial) == 0:
             return config
 
-        return {
-            k: v for k, v in config.items()
-            if k in partial
-        }
+        return {k: v for k, v in config.items() if k in partial}
 
     def as_dict(self, *args, **kwargs) -> dict[str, Any]:
         """Export configuration as a dictionary, the alternative name of :method:`make`.
@@ -138,9 +129,9 @@ class DefaultConfig():
         Args:
             __values (dict[str, Any]): Additonal object.
             args (list[str], optional): Positional arguments handler.
-            partial (list[str], optional): 
+            partial (list[str], optional):
                 Export parts of configuration. Defaults to `None` as exporting all.
-            jsonable (bool, optional): 
+            jsonable (bool, optional):
                 Whether to make the configuration jsonable. Defaults to `False`.
 
         Returns:
@@ -187,7 +178,7 @@ class DefaultConfig():
         target: dict[str, Any],
         excepts: Optional[list[str]] = None,
     ) -> dict[str, list[str]]:
-        """Giving the list of keys include and exclude 
+        """Giving the list of keys include and exclude
         in the configuration from the given dictionary.
 
         Args:
@@ -204,12 +195,12 @@ class DefaultConfig():
         includes = []
         excludes = []
         for k in self.namedtuple._fields:
-            if (k in target or k in excepts):
+            if k in target or k in excepts:
                 includes.append(k)
             else:
                 excludes.append(k)
 
-        return {'include': includes, 'exclude': excludes}
+        return {"include": includes, "exclude": excludes}
 
     def exclude_keys(
         self,
@@ -228,7 +219,7 @@ class DefaultConfig():
         self._handle_input(target)
         if excepts is None:
             excepts = []
-        return self.conclude_keys(target, excepts)['exclude']
+        return self.conclude_keys(target, excepts)["exclude"]
 
     def include_keys(
         self,
@@ -247,7 +238,7 @@ class DefaultConfig():
         self._handle_input(target)
         if excepts is None:
             excepts = []
-        return self.conclude_keys(target, excepts)['include']
+        return self.conclude_keys(target, excepts)["include"]
 
     def useless_keys(
         self,

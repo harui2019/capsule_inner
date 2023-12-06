@@ -1,12 +1,10 @@
 # General Error
 
+
 class CapSuleError(Exception):
     """Base class for errors raised by :module:`capsule`."""
 
-    def __init__(
-        self,
-        *message
-    ):
+    def __init__(self, *message):
         """Set the error message."""
         super().__init__(" ".join(message))
         self.message = " ".join(message)
@@ -14,7 +12,8 @@ class CapSuleError(Exception):
     def __str__(self):
         """Return the message."""
         return repr(self.message)
-    
+
+
 class CapSuleValuedError(CapSuleError, ValueError):
     """ValueErrors raised by :module:`capsule."""
 
@@ -23,10 +22,7 @@ class CapSuleValuedError(CapSuleError, ValueError):
 class CapSuleWarning(Warning):
     """Base class for warning raised by :module:`capsule."""
 
-    def __init__(
-        self,
-        *message
-    ):
+    def __init__(self, *message):
         """Set the error message."""
         super().__init__(" ".join(message))
         self.message = " ".join(message)

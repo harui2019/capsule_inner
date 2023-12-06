@@ -24,7 +24,6 @@ class BasicHook(object):
         self,
         save_location: Path | str = None,
     ) -> None:
-
         if save_location is None:
             save_location = self.config.save_location
         if save_location is None:
@@ -49,7 +48,6 @@ class BasicHook(object):
         hide_print: bool = False,
         **kwargs,
     ) -> requests.Response:
-
         result = requests.post(
             self.config.url,
             json=content,
@@ -60,8 +58,7 @@ class BasicHook(object):
             if not hide_print:
                 print(f"Webhook sent {result.status_code}")
         else:
-            print(
-                f"Not sent with {result.status_code}, response:\n{result.json()}")
+            print(f"Not sent with {result.status_code}, response:\n{result.json()}")
 
         return result
 

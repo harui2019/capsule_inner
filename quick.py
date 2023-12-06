@@ -11,10 +11,9 @@ def quickJSON(
     filename: Union[str, Path],
     mode: str,
     indent: int = 2,
-    encoding: str = 'utf-8',
+    encoding: str = "utf-8",
     jsonable: bool = False,
-
-    save_location: Union[Path, str] = Path('./'),
+    save_location: Union[Path, str] = Path("./"),
     mute: bool = False,
 ) -> None:
     """Configurable quick JSON export.
@@ -25,7 +24,7 @@ def quickJSON(
         mode (str): Mode for :func:`open` function.
         indent (int, optional): Indent length for json. Defaults to 2.
         encoding (str, optional): Encoding method. Defaults to 'utf-8'.
-        jsonablize (bool, optional): 
+        jsonablize (bool, optional):
             Whether to transpile all object to jsonable via :func:`mori.jsonablize`. Defaults to False.
         save_location (Union[Path, str], optional): Location of files. Defaults to Path('./').
     """
@@ -45,15 +44,12 @@ def quickListCSV(
     content: Iterable,
     filename: str,
     mode: str,
-    encoding: str = 'utf-8',
-
+    encoding: str = "utf-8",
     secondFilenameExt: Optional[str] = None,
     jsonable: bool = False,
-    save_location: Union[Path, str] = Path('./'),
-
+    save_location: Union[Path, str] = Path("./"),
     printArgs: dict = {},
 ) -> None:
-
     if not isinstance(save_location, Path):
         save_location = Path(save_location)
     if jsonable:
@@ -61,8 +57,8 @@ def quickListCSV(
 
     tmpSingleColCSV = SingleColumnCSV(content)
     openArgs = {
-        'mode': mode,
-        'encoding': encoding,
+        "mode": mode,
+        "encoding": encoding,
     }
 
     tmpSingleColCSV.export(
@@ -76,10 +72,9 @@ def quickListCSV(
 
 def quickRead(
     filename: Union[str, Path],
-    save_location: Union[Path, str] = Path('./'),
-    filetype: Literal['json', 'txt'] = 'json',
-
-    encoding: str = 'utf-8'
+    save_location: Union[Path, str] = Path("./"),
+    filetype: Literal["json", "txt"] = "json",
+    encoding: str = "utf-8",
 ) -> Union[str, dict]:
     """Quick read file.
 
@@ -93,10 +88,10 @@ def quickRead(
     if not isinstance(save_location, Path):
         save_location = Path(save_location)
 
-    if filetype == 'json':
-        with open(save_location / filename, 'r', encoding=encoding) as File:
+    if filetype == "json":
+        with open(save_location / filename, "r", encoding=encoding) as File:
             return json.load(File)
 
     else:
-        with open(save_location / filename, 'r', encoding=encoding) as File:
+        with open(save_location / filename, "r", encoding=encoding) as File:
             return File.read()

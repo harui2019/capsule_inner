@@ -62,17 +62,16 @@ class GitSyncControl(list[str]):
             return True
 
     defaultOpenArgs = {
-        'encoding': 'utf-8',
-        'mode': 'w+',
+        "encoding": "utf-8",
+        "mode": "w+",
     }
-    defaultPrintArgs = {
-    }
+    defaultPrintArgs = {}
 
     def export(
         self,
         save_location: Union[Path, str],
         openArgs: dict = {
-            'mode': 'w+',
+            "mode": "w+",
         },
         printArgs: dict = {},
     ) -> None:
@@ -84,9 +83,9 @@ class GitSyncControl(list[str]):
             printArgs (dict): The other arguments for :func:`print` function.
 
         """
-        printArgs = {k: v for k, v in printArgs.items() if k != 'file'}
+        printArgs = {k: v for k, v in printArgs.items() if k != "file"}
         printArgs = {**self.defaultPrintArgs, **printArgs}
-        openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
+        openArgs = {k: v for k, v in openArgs.items() if k != "file"}
         openArgs = {**self.defaultOpenArgs, **openArgs}
 
         if isinstance(save_location, (Path)):
@@ -94,15 +93,12 @@ class GitSyncControl(list[str]):
         elif isinstance(save_location, (str)):
             save_location = Path(save_location)
         else:
-            raise TypeError(
-                "The save_location is not the type of 'str' or 'Path'.")
+            raise TypeError("The save_location is not the type of 'str' or 'Path'.")
 
         if not os.path.exists(save_location):
             raise FileNotFoundError("The save_location is not found.")
 
-        with open(
-            save_location / f".gitignore", **openArgs
-        ) as ignoreList:
+        with open(save_location / f".gitignore", **openArgs) as ignoreList:
             [print(item, file=ignoreList, **printArgs) for item in self]
 
     def read(
@@ -125,22 +121,19 @@ class GitSyncControl(list[str]):
         Returns:
             bool: If the .gitignore is found.
         """
-        openArgs = {k: v for k, v in openArgs.items() if k != 'file'}
+        openArgs = {k: v for k, v in openArgs.items() if k != "file"}
         openArgs = {**self.defaultOpenArgs, **openArgs}
-        openArgs['mode'] = 'r'
+        openArgs["mode"] = "r"
 
         if isinstance(save_location, (Path)):
             ...
         elif isinstance(save_location, (str)):
             save_location = Path(save_location)
         else:
-            raise TypeError(
-                "The save_location is not the type of 'str' or 'Path'.")
+            raise TypeError("The save_location is not the type of 'str' or 'Path'.")
 
-        if os.path.exists(save_location / '.gitignore'):
-            with open(
-                save_location / f".gitignore", **openArgs
-            ) as ignoreList:
+        if os.path.exists(save_location / ".gitignore"):
+            with open(save_location / f".gitignore", **openArgs) as ignoreList:
                 for line in ignoreList.readlines():
                     newLine = line.strip()
                     if not newLine in self:
