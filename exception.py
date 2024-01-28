@@ -1,4 +1,9 @@
-# General Error
+"""
+
+================================================================
+Capsule Exceptions (:mod:`qurry.capsule.exception`)
+================================================================
+"""
 
 
 class CapSuleError(Exception):

@@ -1,11 +1,19 @@
-from pathlib import Path
+"""
+
+================================================================
+Quick Capsule (:mod:`qurry.capsule.quick`)
+================================================================
+"""
+
 from typing import Union, Iterable, Literal, Optional
+from pathlib import Path
 import json
 
 from .jsonablize import quickJSONExport, parse
 from .mori.csvlist import SingleColumnCSV
 
 
+# pylint: disable=invalid-name
 def quickJSON(
     content: Iterable,
     filename: Union[str, Path],
@@ -25,7 +33,8 @@ def quickJSON(
         indent (int, optional): Indent length for json. Defaults to 2.
         encoding (str, optional): Encoding method. Defaults to 'utf-8'.
         jsonablize (bool, optional):
-            Whether to transpile all object to jsonable via :func:`mori.jsonablize`. Defaults to False.
+            Whether to transpile all object to jsonable via :func:`mori.jsonablize`.
+            Defaults to False.
         save_location (Union[Path, str], optional): Location of files. Defaults to Path('./').
     """
     return quickJSONExport(
@@ -45,28 +54,42 @@ def quickListCSV(
     filename: str,
     mode: str,
     encoding: str = "utf-8",
-    secondFilenameExt: Optional[str] = None,
     jsonable: bool = False,
     save_location: Union[Path, str] = Path("./"),
-    printArgs: dict = {},
+    print_args: Optional[dict[str, str]] = None,
 ) -> None:
+    """Quickly export a list to csv file.
+
+    Args:
+        content (Iterable): Content of the csv file.
+        filename (str): Filename of the csv file.
+        mode (str): Mode for :func:`open` function.
+        encoding (str, optional): Encoding method. Defaults to 'utf-8'.
+        jsonable (bool, optional):
+            Whether to transpile all object to jsonable via :func:`mori.jsonablize`.
+            Defaults to False.
+        save_location (Union[Path, str], optional):
+            Location of files. Defaults to Path('./').
+        print_args (Optional[dict[str, str]], optional):
+            The arguments for :func:`print` function.
+    """
+
     if not isinstance(save_location, Path):
         save_location = Path(save_location)
     if jsonable:
         content = [parse(v) for v in content]
 
-    tmpSingleColCSV = SingleColumnCSV(content)
-    openArgs = {
+    tmp = SingleColumnCSV(content)
+    open_args = {
         "mode": mode,
         "encoding": encoding,
     }
 
-    tmpSingleColCSV.export(
+    tmp.export(
         save_location=save_location,
         name=filename,
-        secondFilenameExt=secondFilenameExt,
-        openArgs=openArgs,
-        printArgs=printArgs,
+        open_args=open_args,
+        print_args=print_args,
     )
 
 
@@ -95,3 +118,6 @@ def quickRead(
     else:
         with open(save_location / filename, "r", encoding=encoding) as File:
             return File.read()
+
+
+# pylint: enable=invalid-name

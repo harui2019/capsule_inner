@@ -1,20 +1,18 @@
 """
+
 ================================================================
 Configuration for multiple experiment. 
 (:mod:`qurry.capsule.mori.config`)
 ================================================================
-
 """
 
-from typing import NamedTuple, Optional, Callable, Type, Any
+from typing import NamedTuple, Optional, Type, Any
 from collections import namedtuple
 from ..jsonablize import parse as jsonablize
 
 
 class DefaultConfig:
     """Default configuration for multiple experiment."""
-
-    __version__ = (0, 3, 0)
 
     def __init__(
         self,
@@ -53,7 +51,7 @@ class DefaultConfig:
         )
         self.default_names = self.namedtuple._fields
 
-    def __call__(self, *args, **kwargs) -> Callable:
+    def __call__(self, *args, **kwargs) -> dict[str, Any]:
         return self.make(*args, **kwargs)
 
     def __getitem__(self, key) -> Any:
@@ -65,7 +63,7 @@ class DefaultConfig:
 
     def _handle_input(
         self,
-        input_object: dict[Any],
+        input_object: dict[str, Any],
     ) -> None:
         """Check the input for :meth:`.check` and :meth:`.ready`.
 

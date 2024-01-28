@@ -1,18 +1,20 @@
-"""A quick way to create .gitignore
+"""
+================================================================
+GitSync
+================================================================
+A quick way to create .gitignore
 """
 import os
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional, Any
+
+from .utils import defaultOpenArgs, defaultPrintArgs
 
 
 class GitSyncControl(list[str]):
-    """A gitignore file generator."""
+    """A gitignore file generator.
+    A quick way to create .gitignore
 
-    __version__ = (0, 3, 2)
-    """A quick way to create .gitignore
-
-    Args:
-        list ([type]): The list of ignored items.
     """
 
     def sync(
@@ -26,7 +28,8 @@ class GitSyncControl(list[str]):
             filename (str): Filename.
 
         Returns:
-            bool: The file is added to be synchronized, otherwise it's already added then return False.
+            bool: The file is added to be synchronized,
+                otherwise it's already added then return False.
         """
         line = f"!{filename}"
         if line in self:
@@ -57,36 +60,34 @@ class GitSyncControl(list[str]):
                 self.append(line)
                 return True
             return False
-        else:
-            self.append(line)
-            return True
-
-    defaultOpenArgs = {
-        "encoding": "utf-8",
-        "mode": "w+",
-    }
-    defaultPrintArgs = {}
+        self.append(line)
+        return True
 
     def export(
         self,
-        save_location: Union[Path, str],
-        openArgs: dict = {
-            "mode": "w+",
-        },
-        printArgs: dict = {},
+        save_location: Union[Path, str] = Path("./"),
+        open_args: Optional[dict[str, Any]] = None,
+        print_args: Optional[dict[str, Any]] = None,
     ) -> None:
         """Export .gitignore
 
         Args:
             save_location (Path): The location of .gitignore.
-            openArgs (dict): The other arguments for :func:`open` function.
-            printArgs (dict): The other arguments for :func:`print` function.
+            open_args (dict, optional): The other arguments for :func:`open` function.
+            print_args (dict, optional): The other arguments for :func:`print` function.
 
         """
-        printArgs = {k: v for k, v in printArgs.items() if k != "file"}
-        printArgs = {**self.defaultPrintArgs, **printArgs}
-        openArgs = {k: v for k, v in openArgs.items() if k != "file"}
-        openArgs = {**self.defaultOpenArgs, **openArgs}
+        if print_args is None:
+            print_args = defaultPrintArgs
+        else:
+            print_args = {k: v for k, v in print_args.items() if k != "file"}
+            print_args = {**defaultPrintArgs, **print_args}
+        if open_args is None:
+            open_args = defaultOpenArgs
+        else:
+            open_args = {k: v for k, v in open_args.items() if k != "file"}
+            open_args = {**defaultOpenArgs, **open_args}
+        encoding = open_args["encoding"]
 
         if isinstance(save_location, (Path)):
             ...
@@ -98,32 +99,43 @@ class GitSyncControl(list[str]):
         if not os.path.exists(save_location):
             raise FileNotFoundError("The save_location is not found.")
 
-        with open(save_location / f".gitignore", **openArgs) as ignoreList:
-            [print(item, file=ignoreList, **printArgs) for item in self]
+        with open(
+            save_location / ".gitignore", encoding=encoding, **open_args
+        ) as ignore_list:
+            for item in self:
+                print(item, file=ignore_list, **print_args)
 
     def read(
         self,
         save_location: Union[Path, str],
-        takeDuplicate: bool = False,
-        ignoreForNotfound: bool = True,
-        openArgs: dict = {},
+        take_duplicate: bool = False,
+        raise_not_found_error: bool = False,
+        open_args: Optional[dict[str, Any]] = None,
     ) -> bool:
         """ead existed .gitignore
 
         Args:
             save_location (Path): The location of .gitignore.
-            openArgs (dict): The other arguments for :func:`open` function.
-            ignoreForNotfound (bool, optional): Mute `FileNotFoundError` when .gitignore is not found. Defaults to True.
+            take_duplicate (bool, optional): Take duplicate item in .gitignore. Defaults to False.
+            raise_not_found_error (bool, optional):
+                Raise error if .gitignore is not found. Defaults to False.
+            open_args (dict, optional): The other arguments for :func:`open` function.
 
         Raises:
             FileNotFoundError: The .gitignore is not found.
+            TypeError: The save_location is not the type of 'str' or 'Path'.
 
         Returns:
-            bool: If the .gitignore is found.
+            bool: The .gitignore is read successfully.
+
         """
-        openArgs = {k: v for k, v in openArgs.items() if k != "file"}
-        openArgs = {**self.defaultOpenArgs, **openArgs}
-        openArgs["mode"] = "r"
+        if open_args is None:
+            open_args = defaultOpenArgs
+        else:
+            open_args = {k: v for k, v in open_args.items() if k != "file"}
+            open_args = {**defaultOpenArgs, **open_args}
+        open_args["mode"] = "r"
+        encoding = open_args["encoding"]
 
         if isinstance(save_location, (Path)):
             ...
@@ -133,15 +145,17 @@ class GitSyncControl(list[str]):
             raise TypeError("The save_location is not the type of 'str' or 'Path'.")
 
         if os.path.exists(save_location / ".gitignore"):
-            with open(save_location / f".gitignore", **openArgs) as ignoreList:
-                for line in ignoreList.readlines():
-                    newLine = line.strip()
-                    if not newLine in self:
-                        self.append(newLine)
-                    elif takeDuplicate:
-                        self.append(newLine)
+            with open(
+                save_location / ".gitignore", encoding=encoding, **open_args
+            ) as ignore_list:
+                for line in ignore_list.readlines():
+                    new_line = line.strip()
+                    if not new_line in self:
+                        self.append(new_line)
+                    elif take_duplicate:
+                        self.append(new_line)
             return True
 
-        if not ignoreForNotfound:
+        if raise_not_found_error:
             raise FileNotFoundError("The .gitignore is not found.")
         return False

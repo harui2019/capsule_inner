@@ -293,7 +293,7 @@ class Hoshi:
             return ("divider_length",)
 
     def __init__(
-        self, raw: Optional[list[tuple[str]]] = None, name: str = "Hoshi", **kwargs
+        self, raw: Optional[list[tuple[Union[str, int], ...]]] = None, name: str = "Hoshi", **kwargs
     ):
         """
 
@@ -513,7 +513,7 @@ class Hoshi:
         for item in self._print_lines:
             print(item)
 
-    def newline(self, item: Union[dict[str, Any], tuple[str]]):
+    def newline(self, item: Union[dict[str, Any], tuple[str, ...]]):
         """Add a new line.
 
         Args:
@@ -571,8 +571,8 @@ class Hoshi:
     def itemize(
         self,
         description: str,
-        value: str = None,
-        hint: str = None,
+        value: Optional[str] = None,
+        hint: Optional[str] = None,
         listing_level: int = 1,
     ):
         """Add a listing item.

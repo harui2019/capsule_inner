@@ -1,22 +1,30 @@
 """
+
 ================================================================
 Single column csv file (:mod:`qurry.capsule.mori.csvlist`)
 ================================================================
-
 """
-from typing import Optional, TypeVar, Union, NamedTuple
+from typing import (
+    Optional,
+    Literal,
+    Union,
+    TypeVar,
+    NamedTuple,
+    Any,
+)
 from pathlib import Path
 import os
 import csv
 import glob
 
-T = TypeVar("T")
+from .utils import defaultOpenArgs, defaultPrintArgs
+
+_T = TypeVar("_T")
 
 
-class SingleColumnCSV(list[T]):
+class SingleColumnCSV(list[_T]):
     """A single column csv file."""
 
-    __version__ = (0, 3, 1)
     __name__ = "singleCol"
 
     """A quick way to create .gitignore
@@ -34,27 +42,21 @@ class SingleColumnCSV(list[T]):
         super().__init__(*args, **kwargs)
         self.name = name
 
-    defaultOpenArgs = {
-        "mode": "w+",
-        "encoding": "utf-8",
-    }
-    defaultPrintArgs = {}
+    class ParamsControl(NamedTuple):
+        """The type of arguments for :func:`params_control`."""
 
-    class Params(NamedTuple):
-        """Parameters for :func:`export` function."""
-
-        openArgs: dict
-        printArgs: dict
+        open_args: dict[Union[Literal["encoding"], str], Any]
+        print_args: dict[str, Any]
         save_location: Path
 
     @classmethod
     def params_control(
         cls,
-        openArgs: dict = defaultOpenArgs,
-        printArgs: dict = defaultPrintArgs,
+        open_args: Optional[dict[str, Any]] = None,
+        print_args: Optional[dict[str, Any]] = None,
         save_location: Union[Path, str] = Path("./"),
-        isReadOnly: bool = False,
-    ) -> Params:
+        is_read_only: bool = False,
+    ) -> ParamsControl:
         """Handling all arguments.
 
         Args:
@@ -79,12 +81,18 @@ class SingleColumnCSV(list[T]):
         """
 
         # working args
-        printArgs = {k: v for k, v in printArgs.items() if k != "file"}
-        printArgs = {**cls.defaultPrintArgs, **printArgs}
-        openArgs = {k: v for k, v in openArgs.items() if k != "file"}
-        openArgs = {**cls.defaultOpenArgs, **openArgs}
-        if isReadOnly:
-            openArgs["mode"] = "r"
+        if print_args is None:
+            print_args = defaultPrintArgs
+        else:
+            print_args = {k: v for k, v in print_args.items() if k != "file"}
+            print_args = {**defaultPrintArgs, **print_args}
+        if open_args is None:
+            open_args = defaultOpenArgs
+        else:
+            open_args = {k: v for k, v in open_args.items() if k != "file"}
+            open_args = {**defaultOpenArgs, **open_args}
+        if is_read_only:
+            open_args["mode"] = "r"
 
         # save_location
         if isinstance(save_location, (Path, str)):
@@ -95,17 +103,18 @@ class SingleColumnCSV(list[T]):
         if not os.path.exists(save_location):
             raise FileNotFoundError(f"Such location not found: {save_location}")
 
-        return cls.Params(
-            save_location=save_location, openArgs=openArgs, printArgs=printArgs
+        return cls.ParamsControl(
+            open_args=open_args,
+            print_args=print_args,
+            save_location=save_location,
         )
 
     def export(
         self,
         name: Optional[str] = "untitled",
         save_location: Union[Path, str] = Path("./"),
-        secondFilenameExt: Optional[str] = None,
-        openArgs: dict = defaultOpenArgs,
-        printArgs: dict = defaultPrintArgs,
+        open_args: Optional[dict[str, Any]] = None,
+        print_args: Optional[dict[str, Any]] = None,
     ) -> Path:
         """Export `tagList`.
 
@@ -114,17 +123,14 @@ class SingleColumnCSV(list[T]):
                 Name for this `tagList`.
                 Defaults to 'untitled'.
             save_location (Path): The location of file.
-            additionName (Optional[str], optional):
-                Name for this `tagList`,
-            secondFilenameExt (Optional[str], optional):
-            openArgs (dict, optional):
+            open_args (dict, optional):
                 The other arguments for :func:`open` function.
                 Defaults to :attr:`self.defaultOpenArgs`, which is:
                 >>> {
                     'mode': 'w+',
                     'encoding': 'utf-8',
                 }
-            printArgs (dict, optional):
+            print_args (dict, optional):
                 The other arguments for :func:`print` function.
                 Defaults to :attr:`self.defaultPrintArgs`, which is:
                 >>> {}
@@ -137,40 +143,38 @@ class SingleColumnCSV(list[T]):
         """
 
         args = self.params_control(
-            openArgs=openArgs,
-            printArgs=printArgs,
+            open_args=open_args,
+            print_args=print_args,
             save_location=save_location,
         )
-        printArgs = args.printArgs
-        openArgs = args.openArgs
-        save_location = args.save_location
+        encoding = args.open_args["encoding"]
 
         if name is None:
             name = self.name
 
-        filename = (
-            name
-            + (self.__name__ if secondFilenameExt is None else f"{secondFilenameExt}")
-            + ".csv"
-        )
+        filename = name + ".csv"
 
-        with open(save_location / filename, **openArgs, newline="") as ExportCsv:
-            taglistWriter = csv.writer(ExportCsv, quotechar="|")
+        with open(
+            args.save_location / filename,
+            encoding=encoding,
+            **args.open_args,
+            newline="",
+        ) as export_csv:
+            csvlist_writer = csv.writer(export_csv, quotechar="|")
             for v in self:
-                taglistWriter.writerow((v,))
+                csvlist_writer.writerow((v,))
 
-        return save_location / filename
+        return args.save_location / filename
 
     @classmethod
     def read(
         cls,
         name: str,
         save_location: Union[Path, str] = Path("./"),
-        secondFilenameExt: Optional[str] = None,
-        openArgs: dict = defaultOpenArgs,
-        printArgs: dict = defaultPrintArgs,
-        whichNum: int = 0,
-        notFoundRaise: bool = True,
+        open_args: Optional[dict[str, Any]] = None,
+        print_args: Optional[dict[str, Any]] = None,
+        which_num: int = 0,
+        raise_not_found_error: bool = True,
     ):
         """Export `tagList`.
 
@@ -204,65 +208,49 @@ class SingleColumnCSV(list[T]):
         """
 
         args = cls.params_control(
-            openArgs=openArgs,
-            printArgs=printArgs,
+            open_args=open_args,
+            print_args=print_args,
             save_location=save_location,
-            isReadOnly=True,
+            is_read_only=True,
         )
-        printArgs = args.printArgs
-        openArgs = args.openArgs
-        save_location = args.save_location
+        encoding = args.open_args["encoding"]
 
-        secondFilenameExt = (
-            cls.__name__ if secondFilenameExt is None else f"{secondFilenameExt}"
-        )
-
-        lsLoc1 = glob.glob(str(save_location / f"*.{secondFilenameExt}.*"))
-        if len(lsLoc1) == 0:
-            if notFoundRaise:
+        ls_loc1 = glob.glob(str(args.save_location / f"*{name}.*"))
+        if len(ls_loc1) == 0:
+            if raise_not_found_error:
                 raise FileNotFoundError(
-                    f"The file '*.{secondFilenameExt}.*' not found at '{save_location}'."
+                    f"The file '*{name}.*' not found at '{save_location}'."
                 )
-            else:
-                return cls(name=name)
+            return cls(name=name)
 
-        lsLoc2 = (
-            [f for f in lsLoc1] if name is None else [f for f in lsLoc1 if name in f]
-        )
+        ls_loc2 = list(ls_loc1) if name is None else [f for f in ls_loc1 if name in f]
 
-        if len(lsLoc2) < 1:
-            if notFoundRaise:
+        if len(ls_loc2) < 1:
+            if raise_not_found_error:
                 raise FileNotFoundError(
-                    f"The file '{name}.'"
-                    + f"{secondFilenameExt}.csv"
-                    + f" not found at '{save_location}'."
+                    f"The file '{name}.csv' not found at '{save_location}'."
                 )
-            else:
-                return cls(name=secondFilenameExt)
-        elif len(lsLoc2) > 1:
-            lsLoc2 = [lsLoc2[whichNum]]
+            return cls(name=name)
+        if len(ls_loc2) > 1:
+            ls_loc2 = [ls_loc2[which_num]]
             print(
-                f"The following files '{lsLoc2}' are fitting giving 'name' and 'additionName', choosing the '{lsLoc2[0]}'."
+                f"The following files '{ls_loc2}' are fitting giving 'name', "
+                + f"choosing the '{ls_loc2[0]}'."
             )
 
-        filename = lsLoc2[0]
+        filename = ls_loc2[0]
         filename = Path(filename).name
         obj = None
 
-        with open(save_location / filename, **openArgs, newline="") as ReadCsv:
-            taglistReaper = csv.reader(ReadCsv, quotechar="|")
-            obj = cls(
-                taglistReaper,
-                name=secondFilenameExt,
-            )
-            obj = [v[0] for v in obj]
+        with open(
+            args.save_location / filename,
+            encoding=encoding,
+            **args.open_args,
+            newline="",
+        ) as read_csv:
+            csv_reaper = csv.reader(read_csv, quotechar="|")
+            obj: cls[str] = cls(name=name, save_location=args.save_location)
+            for (v,) in csv_reaper:
+                obj.append(v)
 
         return obj
-
-
-# class matrixCSV(list):
-#     """_summary_
-
-#     Args:
-#         list (_type_): _description_
-#     """

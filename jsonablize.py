@@ -1,6 +1,14 @@
-import json
+"""
+
+================================================================
+JSONablize (:mod:`qurry.qurry.capsule.jsonablize`)
+================================================================
+
+"""
+
 import os
 from typing import Hashable, Union, Iterable, Any
+import json
 from collections import OrderedDict
 from pathlib import Path
 
@@ -16,9 +24,9 @@ def value_parse(v: Any) -> Union[Iterable, str, int, float, bool, None]:
     """
 
     try:
-        parsed = json.dumps(v)
+        json.dumps(v)
         return v
-    except TypeError as e:
+    except TypeError:
         return str(v)
 
 
@@ -36,7 +44,7 @@ def key_parse(k: Any) -> Union[str, int, float, bool, None]:
 
     if isinstance(k, (str, int, float, bool)):
         parsed = k
-    elif k == None:
+    elif k is None:
         parsed = k
     else:
         parsed = str(k)
@@ -87,6 +95,7 @@ def sort_hashable_ahead(o: dict) -> dict:
     return sort_o
 
 
+# pylint: disable=invalid-name
 def quickJSONExport(
     content: Iterable,
     filename: Union[str, Path],
@@ -97,6 +106,27 @@ def quickJSONExport(
     save_location: Union[Path, str] = Path("./"),
     mute: bool = False,
 ) -> None:
+    """Quickly export a json file.
+
+    Args:
+        content (Iterable):
+            The content of json file.
+        filename (Union[str, Path]):
+            The filename of json file.
+        mode (str):
+            The mode of open.
+        indent (int, optional):
+            The indent of json file. Defaults to 2.
+        encoding (str, optional):
+            The encoding of json file. Defaults to "utf-8".
+        jsonable (bool, optional):
+            Is the content jsonable. Defaults to False.
+        save_location (Union[Path, str], optional):
+            The location of json file. Defaults to Path("./").
+        mute (bool, optional):
+            Is mute the exportation. Defaults to False.
+    """
+
     if not isinstance(save_location, Path):
         save_location = Path(save_location)
     if not os.path.exists(save_location):
@@ -110,3 +140,6 @@ def quickJSONExport(
             json.dump(content, file, indent=indent, ensure_ascii=False)
         if not mute:
             print(f"'{save_loc_w_name}' exported successfully.")
+
+
+# pylint: enable=invalid-name
