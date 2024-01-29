@@ -5,7 +5,7 @@ Quick Capsule (:mod:`qurry.capsule.quick`)
 ================================================================
 """
 
-from typing import Union, Iterable, Literal, Optional
+from typing import Union, Iterable, Literal, Optional, Any
 from pathlib import Path
 import json
 
@@ -98,7 +98,7 @@ def quickRead(
     save_location: Union[Path, str] = Path("./"),
     filetype: Literal["json", "txt"] = "json",
     encoding: str = "utf-8",
-) -> Union[str, dict]:
+) -> Any:
     """Quick read file.
 
     Args:
