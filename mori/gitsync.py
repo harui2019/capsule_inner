@@ -78,15 +78,15 @@ class GitSyncControl(list[str]):
 
         """
         if print_args is None:
-            print_args = defaultPrintArgs
+            print_args = defaultPrintArgs.copy()
         else:
             print_args = {k: v for k, v in print_args.items() if k != "file"}
-            print_args = {**defaultPrintArgs, **print_args}
+            print_args = {**defaultPrintArgs.copy(), **print_args}
         if open_args is None:
-            open_args = defaultOpenArgs
+            open_args = defaultOpenArgs.copy()
         else:
             open_args = {k: v for k, v in open_args.items() if k != "file"}
-            open_args = {**defaultOpenArgs, **open_args}
+            open_args = {**defaultOpenArgs.copy(), **open_args}
         encoding = open_args.pop("encoding")
 
         if isinstance(save_location, (Path)):
@@ -130,10 +130,10 @@ class GitSyncControl(list[str]):
 
         """
         if open_args is None:
-            open_args = defaultOpenArgs
+            open_args = defaultOpenArgs.copy()
         else:
             open_args = {k: v for k, v in open_args.items() if k != "file"}
-            open_args = {**defaultOpenArgs, **open_args}
+            open_args = {**defaultOpenArgs.copy(), **open_args}
         open_args["mode"] = "r"
         encoding = open_args.pop("encoding")
 

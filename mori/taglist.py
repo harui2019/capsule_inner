@@ -223,24 +223,24 @@ class TagList(defaultdict[Union[_K, Hashable], list[_V]]):
 
         # working args
         if print_args is None:
-            print_args = defaultPrintArgs
+            print_args = defaultPrintArgs.copy()
         else:
             print_args = {k: v for k, v in print_args.items() if k != "file"}
-            print_args = {**defaultPrintArgs, **print_args}
+            print_args = {**defaultPrintArgs.copy(), **print_args}
         if open_args is None:
-            open_args = defaultOpenArgs
+            open_args = defaultOpenArgs.copy()
         else:
             open_args = {k: v for k, v in open_args.items() if k != "file"}
-            open_args = {**defaultOpenArgs, **open_args}
+            open_args = {**defaultOpenArgs.copy(), **open_args}
         if is_read_only:
             open_args["mode"] = "r"
         if json_dump_args is None:
-            json_dump_args = defaultJsonDumpArgs
+            json_dump_args = defaultJsonDumpArgs.copy()
         else:
             json_dump_args = {
                 k: v for k, v in json_dump_args.items() if k != "obj" or k != "fp"
             }
-            json_dump_args = {**defaultJsonDumpArgs, **json_dump_args}
+            json_dump_args = {**defaultJsonDumpArgs.copy(), **json_dump_args}
 
         # save_location
         if isinstance(save_location, (Path, str)):
