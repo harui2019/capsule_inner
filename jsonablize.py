@@ -7,7 +7,7 @@ JSONablize (:mod:`qurry.qurry.capsule.jsonablize`)
 """
 
 import os
-from typing import Hashable, Union, Iterable, Any
+from typing import Hashable, Union, Iterable, Any, Optional
 import json
 from collections import OrderedDict
 from pathlib import Path
@@ -104,27 +104,24 @@ def quickJSONExport(
     encoding: str = "utf-8",
     jsonable: bool = False,
     save_location: Union[Path, str] = Path("./"),
-    mute: bool = False,
-) -> None:
-    """Quickly export a json file.
+    mute: bool = True,
+) -> Optional[str]:
+    """Configurable quick JSON export.
 
     Args:
-        content (Iterable):
-            The content of json file.
-        filename (Union[str, Path]):
-            The filename of json file.
-        mode (str):
-            The mode of open.
-        indent (int, optional):
-            The indent of json file. Defaults to 2.
-        encoding (str, optional):
-            The encoding of json file. Defaults to "utf-8".
-        jsonable (bool, optional):
-            Is the content jsonable. Defaults to False.
-        save_location (Union[Path, str], optional):
-            The location of json file. Defaults to Path("./").
-        mute (bool, optional):
-            Is mute the exportation. Defaults to False.
+        content (any): Content wants to be written.
+        filename (str): Filename of the file.
+        mode (str): Mode for :func:`open` function.
+        indent (int, optional): Indent length for json. Defaults to 2.
+        encoding (str, optional): Encoding method. Defaults to 'utf-8'.
+        jsonablize (bool, optional):
+            Whether to transpile all object to jsonable via :func:`mori.jsonablize`.
+            Defaults to False.
+        save_location (Union[Path, str], optional): Location of files. Defaults to Path('./').
+        mute (bool, optional): Mute the exportation. Defaults to True.
+
+    Returns:
+        Optional[str]: The filename of the file when not mute.
     """
 
     if not isinstance(save_location, Path):
@@ -138,8 +135,8 @@ def quickJSONExport(
             json.dump(parse(content), file, indent=indent, ensure_ascii=False)
         else:
             json.dump(content, file, indent=indent, ensure_ascii=False)
-        if not mute:
-            print(f"'{save_loc_w_name}' exported successfully.")
+    if not mute:
+        return f"'{save_loc_w_name}' exported successfully."
 
 
 # pylint: enable=invalid-name

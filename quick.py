@@ -22,8 +22,8 @@ def quickJSON(
     encoding: str = "utf-8",
     jsonable: bool = False,
     save_location: Union[Path, str] = Path("./"),
-    mute: bool = False,
-) -> None:
+    mute: bool = True,
+) -> Optional[str]:
     """Configurable quick JSON export.
 
     Args:
@@ -36,6 +36,10 @@ def quickJSON(
             Whether to transpile all object to jsonable via :func:`mori.jsonablize`.
             Defaults to False.
         save_location (Union[Path, str], optional): Location of files. Defaults to Path('./').
+        mute (bool, optional): Mute the exportation. Defaults to True.
+
+    Returns:
+        Optional[str]: The filename of the file when not mute.
     """
     return quickJSONExport(
         content=content,
