@@ -329,7 +329,7 @@ class TagList(defaultdict[Union[_K, Hashable], list[_V]]):
             filetype=filetype,
         )
 
-        encoding = args.open_args["encoding"]
+        encoding = args.open_args.pop("encoding")
         assert isinstance(encoding, str), "encoding must be str"
 
         filename = ("" if name is None else f"{name}.") + f"{taglist_name}.{filetype}"
@@ -430,7 +430,7 @@ class TagList(defaultdict[Union[_K, Hashable], list[_V]]):
             filetype=filetype,
             is_read_only=True,
         )
-        encoding = args.open_args["encoding"]
+        encoding = args.open_args.pop("encoding")
         assert isinstance(encoding, str), "encoding must be str"
 
         ls_loc11 = glob.glob(str(args.save_location / f"{taglist_name}.*"))

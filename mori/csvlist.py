@@ -147,7 +147,7 @@ class SingleColumnCSV(list[_T]):
             print_args=print_args,
             save_location=save_location,
         )
-        encoding = args.open_args["encoding"]
+        encoding = args.open_args.pop("encoding")
 
         if name is None:
             name = self.name
@@ -213,7 +213,7 @@ class SingleColumnCSV(list[_T]):
             save_location=save_location,
             is_read_only=True,
         )
-        encoding = args.open_args["encoding"]
+        encoding = args.open_args.pop("encoding")
 
         ls_loc1 = glob.glob(str(args.save_location / f"*{name}.*"))
         if len(ls_loc1) == 0:

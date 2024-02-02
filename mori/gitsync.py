@@ -87,7 +87,7 @@ class GitSyncControl(list[str]):
         else:
             open_args = {k: v for k, v in open_args.items() if k != "file"}
             open_args = {**defaultOpenArgs, **open_args}
-        encoding = open_args["encoding"]
+        encoding = open_args.pop("encoding")
 
         if isinstance(save_location, (Path)):
             ...
@@ -135,7 +135,7 @@ class GitSyncControl(list[str]):
             open_args = {k: v for k, v in open_args.items() if k != "file"}
             open_args = {**defaultOpenArgs, **open_args}
         open_args["mode"] = "r"
-        encoding = open_args["encoding"]
+        encoding = open_args.pop("encoding")
 
         if isinstance(save_location, (Path)):
             ...
