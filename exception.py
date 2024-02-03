@@ -35,3 +35,7 @@ class CapSuleWarning(Warning):
     def __str__(self):
         """Return the message."""
         return repr(self.message)
+
+
+class TagListTakeNotIterableWarning(CapSuleWarning):
+    """Warning raised when the input of `TagList.take` is not iterable."""

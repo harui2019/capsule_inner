@@ -4,6 +4,7 @@
 TagList (:mod:`qurry.capsule.mori.taglist`)
 ================================================================
 """
+
 from typing import (
     Optional,
     Literal,
@@ -11,6 +12,7 @@ from typing import (
     TypeVar,
     Hashable,
     NamedTuple,
+    Iterable,
     Any,
     overload,
 )
@@ -24,6 +26,7 @@ import warnings
 
 from .utils import defaultOpenArgs, defaultPrintArgs, defaultJsonDumpArgs
 from ..jsonablize import parse
+from ..exception import TagListTakeNotIterableWarning
 
 _K = TypeVar("_K")
 _V = TypeVar("_V")
@@ -66,13 +69,11 @@ def tuple_str_parse(k: str) -> Union[tuple[str, ...], str]:
 @overload
 def key_tuple_loads(
     o: dict[Union[Hashable, _K], _T]
-) -> dict[Union[Hashable, tuple[Hashable, ...], _K], _T]:
-    ...
+) -> dict[Union[Hashable, tuple[Hashable, ...], _K], _T]: ...
 
 
 @overload
-def key_tuple_loads(o: _T) -> _T:
-    ...
+def key_tuple_loads(o: _T) -> _T: ...
 
 
 def key_tuple_loads(o):
@@ -128,9 +129,34 @@ class TagList(defaultdict[Union[_K, Hashable], list[_V]]):
     __name__ = "TagList"
     protect_keys = ["_all", ()]
 
-    def __init__(self, name: str = __name__) -> None:
+    def __init__(
+        self,
+        o: Optional[dict[Union[_K, Hashable], list[_V]]] = None,
+        name: str = __name__,
+        tuple_str_auto_transplie: bool = True,
+    ) -> None:
+
+        if o is None:
+            o = {}
+        if not isinstance(o, dict):
+            raise ValueError("Input needs to be a dict with all values are iterable.")
         super().__init__(list)
         self.__name__ = name
+
+        o = key_tuple_loads(o) if tuple_str_auto_transplie else o
+        not_list_v = []
+        for k, v in o.items():
+            if isinstance(v, Iterable):
+                self[k] = list(v)
+            else:
+                not_list_v.append(k)
+
+        if len(not_list_v) > 0:
+            warnings.warn(
+                f"The following keys '{not_list_v}' "
+                + "with the values are not iterable won't be added.",
+                category=TagListTakeNotIterableWarning,
+            )
 
     def all(self) -> list[_V]:
         """Export all values in `tagList`.
@@ -477,11 +503,12 @@ class TagList(defaultdict[Union[_K, Hashable], list[_V]]):
             with open(
                 args.save_location / filename, encoding=encoding, **args.open_args
             ) as read_json:
-                raw_data: dict[str, list[str]] = json.load(read_json)
-                raw_data = (
-                    key_tuple_loads(raw_data) if tuple_str_auto_transplie else raw_data
+                raw_data: dict[Hashable, list[str]] = json.load(read_json)
+                obj = cls(
+                    o=raw_data,
+                    name=taglist_name,
+                    tuple_str_auto_transplie=tuple_str_auto_transplie,
                 )
-                obj = cls(name=taglist_name)
             return obj
 
         if filetype == "csv":
