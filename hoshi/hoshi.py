@@ -55,6 +55,7 @@ Hoshi - A process content printer ?
     who trains it with such content and how. 
     "Does Skynet subscribe to Virtual Youtuber?")
 """
+
 from typing import Optional, Union, NamedTuple, Literal, Any, overload
 import pprint
 
@@ -157,8 +158,7 @@ def itemize(
     description: str,
     *,
     export_len: Literal[True],
-) -> tuple[str, int, int]:
-    ...
+) -> tuple[str, int, int]: ...
 
 
 @overload
@@ -166,8 +166,7 @@ def itemize(
     description: str,
     *,
     independent_newline: Literal[True],
-) -> Union[tuple[str, str], str]:
-    ...
+) -> Union[tuple[str, str], str]: ...
 
 
 @overload
@@ -176,8 +175,7 @@ def itemize(
     *,
     export_len: bool,
     independent_newline: bool,
-) -> str:
-    ...
+) -> str: ...
 
 
 def itemize(
@@ -293,7 +291,10 @@ class Hoshi:
             return ("divider_length",)
 
     def __init__(
-        self, raw: Optional[list[tuple[Union[str, int, Any], ...]]] = None, name: str = "Hoshi", **kwargs
+        self,
+        raw: Optional[list[tuple[Union[str, int, Any], ...]]] = None,
+        name: str = "Hoshi",
+        **kwargs,
     ):
         """
 
