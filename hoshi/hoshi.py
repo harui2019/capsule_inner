@@ -17,19 +17,23 @@ Please keep mind on your qiskit version, an very outdated version may cause some
         
 - After:
         
->>> check_msg = Hoshi([
-        ('divider', 60),
-        ('h3', 'Qiskit version outdated warning'),
-        ('txt', "Please keep mind on your qiskit version, 
-        an very outdated version may cause some problems."),
-        ('itemize', 'Local Qiskit version', __qiskit_version__['qiskit']),
-        {
-            'type': 'itemize',
-            'description': 'Latest Qiskit version',
-            'value': latest_version,
-        }
+>>> check_msg = Hoshi(
+        [
+            ("divider", 60),
+            ("h3", "Qiskit version outdated warning"),
+            (
+                "txt",
+                "Please keep mind on your qiskit version,"
+                + " an very outdated version may cause some problems.",
+            ),
+            ("itemize", "Local Qiskit version", 3),
+            {
+                "type": "itemize",
+                "description": "Latest Qiskit version",
+                "value": 3,
+            },
         ],
-        ljust_describe_len=40,
+        ljust_description_len=40,
     )
 >>> print(check_msg)
 
@@ -292,7 +296,11 @@ class Hoshi:
 
     def __init__(
         self,
-        raw: Optional[list[tuple[Union[str, int, Any], ...]]] = None,
+        raw: Optional[
+            list[
+                Union[tuple[Union[str, int, Any], ...], dict[str, Union[str, int, Any]]]
+            ]
+        ] = None,
         name: str = "Hoshi",
         **kwargs,
     ):
