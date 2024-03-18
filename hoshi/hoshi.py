@@ -296,11 +296,7 @@ class Hoshi:
 
     def __init__(
         self,
-        raw: Optional[
-            list[
-                Union[tuple[Union[str, int, Any], ...], dict[str, Union[str, int, Any]]]
-            ]
-        ] = None,
+        raw: Optional[list[Union[tuple[Any, ...], dict[str, Any]]]] = None,
         name: str = "Hoshi",
         **kwargs,
     ):
